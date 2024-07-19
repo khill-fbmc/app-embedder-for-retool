@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build
         run: |-
@@ -19,7 +19,7 @@ jobs:
           zip -r retool-embedder-${{ github.event.head_commit.id }}.zip build
 
       - name: Archive retool-embedder Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: retool-embedder-${{ github.sha }}
           path: retool-embedder-${{ github.event.head_commit.id }}.zip

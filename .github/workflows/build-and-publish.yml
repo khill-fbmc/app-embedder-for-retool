@@ -12,7 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Build Extension
         run: |-
           npm ci
           npm run build
@@ -23,3 +28,9 @@ jobs:
         with:
           name: retool-embedder-${{ github.sha }}
           path: retool-embedder-${{ github.event.head_commit.id }}.zip
+
+      - name: Archive retool-embedder Artifact
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "retool-embedder-${{ github.event.head_commit.id }}.zip"
+          body: "# Retool Embedder CI Build\n## retool-embedder-${{ github.event.head_commit.id }}.zip"

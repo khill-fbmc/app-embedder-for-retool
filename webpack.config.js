@@ -18,7 +18,9 @@ module.exports = {
     rules: moduleRules,
   },
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"].concat(fileExtensions.map((ext) => `.${ext}`)),
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"].concat(
+      fileExtensions.map((ext) => `.${ext}`)
+    ),
   },
   plugins,
   optimization,

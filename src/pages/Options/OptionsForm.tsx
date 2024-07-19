@@ -1,22 +1,30 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Button, Container } from "react-bootstrap";
+import React, { useMemo, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 // import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 
-import type { Environment, RetoolVersion } from "../../lib/RetoolURL";
+import { type Environment, retoolUrl, type RetoolVersion } from "../../lib/RetoolURL";
+
+import type { useChromeStorage } from "../../hooks/useChromeStorage";
 import type { ExtensionSettings } from "../../lib/types";
 
 type Props = {
   settings: ExtensionSettings;
-  saveSettings: (settings: ExtensionSettings) => void;
-};
+  // saveSettings: (settings: ExtensionSettings) => void;
+} & ReturnType<typeof useChromeStorage<ExtensionSettings>>;
 
-const OptionsForm: React.FC<Props> = ({ settings, saveSettings }) => {
-  const [app, setApp] = useState<string>("");
-  const [domain, setDomain] = useState<string>("");
-  const [env, setEnv] = useState<Environment>("production");
-  const [version, setVersion] = useState<RetoolVersion>("latest");
+const OptionsForm: React.FC<Props> = ({ settings, saveSettings, loadSettings }) => {
+  const [app, setApp] = useState<string | undefined>(settings?.app);
+  const [domain, setDomain] = useState<string | undefined>(settings?.domain);
+  const [env, setEnv] = useState<Environment>(settings?.env ?? "production");
+  const [version, setVersion] = useState<RetoolVersion>(settings?.version ?? "latest");
+
+  const url = useMemo(() => {
+    return retoolUrl({ domain: `${domain}`, app, version, env })
+      .embed()
+      .toString();
+  }, [domain, app, version, env]);
 
   const handleSaveSettings = async () => {
     await saveSettings({
@@ -25,7 +33,7 @@ const OptionsForm: React.FC<Props> = ({ settings, saveSettings }) => {
       version,
       env,
     });
-    console.log(settings);
+    alert("Saved!");
   };
 
   return (
@@ -35,16 +43,18 @@ const OptionsForm: React.FC<Props> = ({ settings, saveSettings }) => {
           className="mb-3"
           controlId="domain"
         >
-          <Form.Label>Workspace Domain</Form.Label>
+          <Form.Label>Instance Name</Form.Label>
           <InputGroup className="">
             <InputGroup.Text>https://</InputGroup.Text>
             <Form.Control
               value={domain}
-              onChange={(e) => setDomain(e.target.value)}
+              onChange={(e) => setDomain(e.target.value.replace(/\s/, ""))}
             />
             <InputGroup.Text>.retool.com</InputGroup.Text>
           </InputGroup>
-          <Form.Text className="text-muted">This is your registered instance name.</Form.Text>
+          <Form.Text className="text-muted">
+            This is your registered domain / instance name.
+          </Form.Text>
         </Form.Group>
         <Form.Group
           className="mb-3"
@@ -52,7 +62,10 @@ const OptionsForm: React.FC<Props> = ({ settings, saveSettings }) => {
         >
           <Form.Label>App Name</Form.Label>
           <InputGroup className="">
-            <InputGroup.Text>https://{domain}.retool.com/app/</InputGroup.Text>
+            <InputGroup.Text>
+              https://{domain === "" ? <span className="text-danger">undefined</span> : domain}
+              .retool.com/app/
+            </InputGroup.Text>
             <Form.Control
               value={app}
               onChange={(e) => setApp(e.target.value)}
@@ -98,7 +111,31 @@ const OptionsForm: React.FC<Props> = ({ settings, saveSettings }) => {
           </Form.Select>
           <Form.Text className="text-muted">Select preferred environment.</Form.Text>
         </Form.Group>
-        <div className="d-flex justify-content-end">
+        <Form.Group
+          className="mb-3"
+          controlId="url"
+        >
+          <Form.Label>Composed URL</Form.Label>
+          <Form.Control
+            disabled
+            readOnly
+            value={url}
+          ></Form.Control>
+          <Form.Text className="text-muted">Does this look correct?</Form.Text>
+        </Form.Group>
+        <div className="d-flex gap-4 justify-content-end">
+          <Button
+            variant="primary"
+            type="button"
+            className="mt-4"
+            onClick={(e) => {
+              e.preventDefault();
+              loadSettings();
+              return false;
+            }}
+          >
+            Load Settings
+          </Button>
           <Button
             variant="success"
             type="submit"
@@ -115,18 +152,27 @@ const OptionsForm: React.FC<Props> = ({ settings, saveSettings }) => {
       </Form>
       <Container>
         <p>Debugging</p>
-        <pre>
-          {JSON.stringify(
-            {
-              domain,
-              app,
-              version,
-              env,
-            },
-            null,
-            2
-          )}
-        </pre>
+        <Row>
+          <Col>
+            Form
+            <pre>
+              {JSON.stringify(
+                {
+                  domain,
+                  app,
+                  version,
+                  env,
+                },
+                null,
+                2
+              )}
+            </pre>
+          </Col>
+          <Col>
+            Loaded Settings
+            <pre>{JSON.stringify(settings, null, 2)}</pre>
+          </Col>
+        </Row>
       </Container>
     </>
   );

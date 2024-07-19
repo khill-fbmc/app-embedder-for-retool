@@ -12,20 +12,12 @@ import type { ExtensionSettings } from "../../lib/types";
 
 interface Props {
   title: string;
+  settings: ExtensionSettings;
 }
 
-const Options: React.FC<Props> = ({ title }: Props) => {
-  const { loadSettings, saveSettings } = useChromeStorage<ExtensionSettings>();
-  const [settings, setSettings] = useState<ExtensionSettings>({});
-
-  // No dependencies = Run once on page load
-  useEffect(() => {
-    const load = async () => {
-      setSettings(await loadSettings());
-    };
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const Options: React.FC<Props> = ({ title, settings }) => {
+  useState;
+  const { saveSettings, loadSettings } = useChromeStorage<ExtensionSettings>();
 
   return (
     <>
@@ -47,6 +39,7 @@ const Options: React.FC<Props> = ({ title }: Props) => {
         <OptionsForm
           settings={settings}
           saveSettings={saveSettings}
+          loadSettings={loadSettings}
         />
       </Container>
     </>

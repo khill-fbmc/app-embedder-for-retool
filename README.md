@@ -2,6 +2,8 @@
 
 # Chrome Extension - Retool Embedder
 
+> @TODO: Work on Publishing to the Chrome Store
+
 ## Installing and Running
 
 ### Using this:

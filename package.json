@@ -1,10 +1,10 @@
 {
   "name": "chrome-ext-retool-embedder",
-  "version": "0.1.0",
-  "description": "A chrome extension boilerplate built with React 18, Webpack 5, and Webpack Dev Server 4",
+  "version": "0.2.0",
+  "description": "Host Retool apps in Chrome's SidePanel",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lxieyang/chrome-extension-boilerplate-react.git"
+    "url": "https://github.com/khill-fbmc/chrome-ext-retool-embedder.git"
   },
   "license": "MIT",
   "scripts": {

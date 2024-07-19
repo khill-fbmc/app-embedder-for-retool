@@ -6,8 +6,10 @@ on:
 
 jobs:
   build-retool-embedder:
-    name: Build Chrome extension artifact
+    name: Build Retool Embedder Chrome Extension
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,5 +34,7 @@ jobs:
       - name: Archive retool-embedder Artifact
         uses: ncipollo/release-action@v1
         with:
+          tag: ${{ github.event.head_commit.id }}
+          commit: "main"
           artifacts: "retool-embedder-${{ github.event.head_commit.id }}.zip"
           body: "# Retool Embedder CI Build\n## retool-embedder-${{ github.event.head_commit.id }}.zip"

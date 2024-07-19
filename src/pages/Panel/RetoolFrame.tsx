@@ -1,8 +1,7 @@
 import React from "react";
+import { Container } from "react-bootstrap";
 
-import { useRetoolURL } from "../../hooks/useRetoolURL";
-
-import type { Environment, RetoolVersion } from "../../lib/RetoolURL";
+import { type Environment, retoolUrl, type RetoolVersion } from "../../lib/RetoolURL";
 
 type Props = {
   title: string;
@@ -13,13 +12,12 @@ type Props = {
 };
 
 const RetoolFrame: React.FC<Props> = ({ title, domain, app, version, env }) => {
-  const { builder } = useRetoolURL({ app, version, domain, env });
-
+  const url = retoolUrl({ app, version, domain, env }).embed();
   return (
     <iframe
       id="retool-frame"
       title={title}
-      src={builder.embed().toString()}
+      src={url.toString()}
       width="100%"
       height="100%"
     />

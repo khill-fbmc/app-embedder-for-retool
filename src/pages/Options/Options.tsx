@@ -8,7 +8,7 @@ import retoolLogo from "../../assets/img/retool.svg";
 import { useChromeStorage } from "../../hooks/useChromeStorage";
 import OptionsForm from "./OptionsForm";
 
-import type { ExtensionSettings } from "../../lib/types";
+import type { ExtensionSettings } from "../../types";
 
 interface Props {
   title: string;
@@ -16,7 +16,6 @@ interface Props {
 }
 
 const Options: React.FC<Props> = ({ title, settings }) => {
-  useState;
   const { saveSettings, loadSettings } = useChromeStorage<ExtensionSettings>();
 
   return (

@@ -7,7 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { type Environment, retoolUrl, type RetoolVersion } from "../../lib/RetoolURL";
 
 import type { useChromeStorage } from "../../hooks/useChromeStorage";
-import type { ExtensionSettings } from "../../lib/types";
+import type { ExtensionSettings } from "../../types";
 
 type Props = {
   settings: ExtensionSettings;

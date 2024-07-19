@@ -22,7 +22,7 @@ module.exports = {
   manifestPath,
   outputPath,
   entryPaths: {
-    panel: path.join(panelPath, "index.jsx"),
+    panel: path.join(panelPath, "index.tsx"),
     options: path.join(optionsPath, "index.tsx"),
     background: path.join(backgroundPath, "index.js"),
     contentScript: path.join(contentPath, "index.js"),

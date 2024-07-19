@@ -4,14 +4,23 @@ import React from "react";
 
 import RetoolFrame from "./RetoolFrame";
 
-const Panel: React.FC = () => {
+import type { ExtensionSettings } from "../../types";
+
+interface Props {
+  settings: ExtensionSettings;
+}
+
+const Panel: React.FC<Props> = ({ settings }) => {
+  const { app, domain, env, version } = settings;
+
   return (
     <div className="container">
       <RetoolFrame
         title="RetoolEmbedder"
-        domain={"fortunabmc"}
-        app={"embedded-purchase-orders"}
-        env="development"
+        domain={`${domain}`}
+        app={`${app}`}
+        env={env}
+        version={version}
       />
     </div>
   );

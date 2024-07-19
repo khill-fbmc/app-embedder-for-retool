@@ -6,13 +6,22 @@ on:
 
 jobs:
   build-retool-embedder:
-    name: Build Retool Embedder Chrome Extension
+    name: "Build, Bundle, Release"
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
+      - name: Confirm git commit SHA output
+        run: "echo 'SHORT HASH=${{ env.COMMIT_SHORT_SHA }}'"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -23,18 +32,18 @@ jobs:
         run: |-
           npm ci
           npm run build
-          zip -r retool-embedder-${{ github.event.head_commit.id }}.zip build
+          zip -r retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip build
 
       - name: Archive retool-embedder Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: retool-embedder-${{ github.sha }}
-          path: retool-embedder-${{ github.event.head_commit.id }}.zip
+          name: retool-embedder-${{ env.COMMIT_SHORT_SHA }}
+          path: retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip
 
       - name: Archive retool-embedder Artifact
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.event.head_commit.id }}
+          tag: "ci-${{ env.COMMIT_SHORT_SHA }}"
           commit: "main"
-          artifacts: "retool-embedder-${{ github.event.head_commit.id }}.zip"
-          body: "# Retool Embedder CI Build\n## retool-embedder-${{ github.event.head_commit.id }}.zip"
+          artifacts: "retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip"
+          body: "# Retool Embedder CI Build\n## retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip"

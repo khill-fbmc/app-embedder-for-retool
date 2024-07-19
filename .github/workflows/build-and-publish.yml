@@ -1,0 +1,25 @@
+name: Build & Publish Extension
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-retool-embedder:
+    name: Build Chrome extension artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |-
+          npm ci
+          npm run build
+          zip -r retool-embedder-${{ github.event.head_commit.id }}.zip build
+
+      - name: Archive retool-embedder Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: retool-embedder-${{ github.sha }}
+          path: retool-embedder-${{ github.event.head_commit.id }}.zip

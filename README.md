@@ -4,7 +4,18 @@
 
 ## Installing and Running
 
-### Procedures:
+### Using this:
+1. Download the [latest release](https://github.com/khill-fbmc/chrome-ext-retool-embedder/releases).
+2. Extract the zip.
+3. You will get a `build` folder.
+4. Rename / Move this folder somewhere that is easy to reference.
+5. Load your extension on Chrome following:
+   1. Access `chrome://extensions/`
+   2. Check `Developer mode`
+   3. Click on `Load unpacked extension`
+   4. Select the folder from step `4` folder.
+
+### Hacking On This:
 
 1. Check if your [Node.js](https://nodejs.org/) version is >= **18**.
 2. Clone this repository.

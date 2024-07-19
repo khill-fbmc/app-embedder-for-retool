@@ -1,0 +1,12 @@
+body {
+  background-color: #242424;
+}
+
+.container {
+  height: 100vh;
+  color: #ffffff;
+
+  iframe {
+    border: 0;
+  }
+}

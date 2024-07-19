@@ -1,0 +1,86 @@
+{
+  "extends": [
+    "react-app",
+    "plugin:import/recommended"
+  ],
+  "plugins": [
+    "prettier",
+    "import",
+    "simple-import-sort"
+  ],
+  "globals": {
+    "chrome": "readonly"
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [
+        ".js",
+        ".ts",
+        ".jsx",
+        ".tsx"
+      ]
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "tsconfig.json"
+      }
+    }
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "react/jsx-first-prop-new-line": [
+      "error",
+      "multiline"
+    ],
+    "react/jsx-max-props-per-line": [
+      "error",
+      {
+        "maximum": 1,
+        "when": "multiline"
+      }
+    ],
+    "react/jsx-indent-props": [
+      "error",
+      2
+    ],
+    "react/jsx-closing-bracket-location": [
+      "error",
+      "tag-aligned"
+    ],
+    "@typescript-eslint/consistent-type-imports": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    "simple-import-sort/exports": "error",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        // The default grouping, but with type imports last as a separate
+        // group, sorting that group like non-type imports are grouped.
+        "groups": [
+          [
+            "^\\u0000"
+          ],
+          [
+            "^node:"
+          ],
+          [
+            "^@?\\w"
+          ],
+          [
+            "^"
+          ],
+          [
+            "^\\."
+          ],
+          [
+            "^node:.*\\u0000$",
+            "^@?\\w.*\\u0000$",
+            "^[^.].*\\u0000$",
+            "^\\..*\\u0000$"
+          ]
+        ]
+      }
+    ]
+  }
+}

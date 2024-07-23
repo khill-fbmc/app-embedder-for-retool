@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Alert } from "react-bootstrap";
+import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
@@ -7,12 +9,15 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 // eslint-disable-next-line import/no-named-as-default
 import toast, { Toaster } from "react-hot-toast";
+import useSWR, { useSWRConfig } from "swr";
 
+import { useRetoolUrl } from "../../hooks/useRetoolUrl";
+import { useWorkflow } from "../../hooks/useWorkflow";
 import * as MessageBroker from "../../lib/chrome.messages";
 import { StorageManager } from "../../lib/chrome.storage";
 import { log } from "../../lib/logger";
-import { type Environment, retoolUrl, type RetoolVersion } from "../../lib/RetoolURL";
 
+import type { Environment, RetoolUrlConfig, RetoolVersion } from "../../lib/RetoolURL";
 import type { ExtensionSettings } from "../../types";
 
 type Props = {
@@ -21,16 +26,19 @@ type Props = {
 
 const OptionsForm: React.FC<Props> = ({ settings }) => {
   const storage = new StorageManager<ExtensionSettings>();
-  const [app, setApp] = useState<string | undefined>(settings?.app);
-  const [domain, setDomain] = useState<string | undefined>(settings?.domain);
-  const [env, setEnv] = useState<Environment>(settings?.env ?? "production");
-  const [version, setVersion] = useState<RetoolVersion>(settings?.version ?? "latest");
 
-  const url = useMemo(() => {
-    return retoolUrl({ domain: `${domain}`, app, version, env })
-      .embed()
-      .toString();
-  }, [domain, app, version, env]);
+  const {
+    data: remoteAppList,
+    isLoading,
+    workflowUrl,
+    workflowApiKey,
+    setWorkflowUrl,
+    setWorkflowApiKey,
+  } = useWorkflow(`${settings?.workflowUrl}`, `${settings.workflowApiKey}`);
+
+  const { url, domain, app, version, env, setApp, setDomain, setVersion, setEnv } = useRetoolUrl(
+    settings as RetoolUrlConfig
+  );
 
   const handleSaveSettings = async (reloadFrame = false) => {
     if (domain === "") {
@@ -47,6 +55,8 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
         app,
         version,
         env,
+        workflowUrl,
+        workflowApiKey,
       });
       if (reloadFrame === false) {
         toast.success("Settings saved.");
@@ -95,16 +105,23 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 App Name{"  "}
                 <span className="d-inline ml-2 text-danger">(required)</span>
               </Form.Label>
-              {/* <InputGroup className="">
-                <InputGroup.Text>
-                  https://{domain === "" ? <span className="text-danger">undefined</span> : domain}
-                  .retool.com/app/
-                </InputGroup.Text> */}
-              <Form.Control
+              {/* <Form.Control
                 value={app}
                 onChange={(e) => setApp(e.target.value)}
-              />
-              {/* </InputGroup> */}
+              /> */}
+              <Form.Select
+                value={app}
+                onChange={(e) => setApp(e.target.value as Environment)}
+              >
+                {remoteAppList?.map((appName) => (
+                  <option
+                    key={appName}
+                    value={appName}
+                  >
+                    {appName}
+                  </option>
+                ))}
+              </Form.Select>
               <Form.Text className="text-muted">
                 Use the "Share" button in the editor and copy the name / id from the URL after
                 "app/"
@@ -170,6 +187,67 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
               </InputGroup>
               <Form.Text className="text-muted">Does this look correct?</Form.Text>
             </Form.Group>
+
+            <Accordion defaultActiveKey="0">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>App Name Provider</Accordion.Header>
+                <Accordion.Body>
+                  <Form.Group
+                    className="mb-4"
+                    controlId="workflowUrl"
+                  >
+                    <p className="text-muted">
+                      Use these fields to enable a Retool Workflow to provide a list of apps to
+                      select from
+                    </p>
+                    <Form.Label>Workflow URL</Form.Label>
+                    <Form.Control
+                      value={workflowUrl}
+                      onChange={(e) => setWorkflowUrl(e.target.value)}
+                    />
+                    <Form.Text className="text-muted">
+                      Supply a Retool workflow URL that returns a <code>200</code> with a JSON body
+                      formatted <code>{"{ apps: string[] }"}</code>
+                    </Form.Text>
+                  </Form.Group>
+                  <Form.Group
+                    className="mb-4"
+                    controlId="workflowApiKey"
+                  >
+                    <Form.Label>Workflow API Key</Form.Label>
+                    <Form.Control
+                      type="password"
+                      value={workflowApiKey}
+                      onChange={(e) => setWorkflowApiKey(e.target.value)}
+                    />
+                    <Form.Text className="text-muted">Copy this value from Retool</Form.Text>
+                  </Form.Group>
+
+                  <Container className="d-flex justify-content-end">
+                    {/* <Button
+                      variant="primary"
+                      title={`Refetch app name list`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        console.log("mutating");
+                        mutate();
+                      }}
+                    >
+                      Reload App List
+                    </Button> */}
+                  </Container>
+                  {isLoading ? (
+                    <p className="text-muted">⚙️ Fetching...</p>
+                  ) : remoteAppList ? (
+                    <p className="text-muted">
+                      ✅ Success. Loaded {remoteAppList.length} app names.
+                    </p>
+                  ) : (
+                    <p className="text-muted">‼️ No results returned.</p>
+                  )}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
             <div className="d-flex gap-4 justify-content-end">
               <Button
                 variant="success"
@@ -182,18 +260,6 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 }}
               >
                 Save
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                className="mt-4"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSaveSettings(true);
-                  return false;
-                }}
-              >
-                Save & Reload
               </Button>
             </div>
           </Form>

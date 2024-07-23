@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
-const { manifestPath, outputPath, pagesPath, assetsPath, htmlTemplates } = require("./paths");
+const { manifestPath, outputPath, assetsPath, htmlTemplates } = require("./paths");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 const forceOutput = { to: outputPath, force: true };
@@ -35,10 +35,6 @@ const commonPlugins = [
   copyManifestPlugin,
   new CopyWebpackPlugin({
     patterns: [
-      {
-        from: path.join(pagesPath, "Content", "content.styles.css"),
-        ...forceOutput,
-      },
       {
         from: path.join(assetsPath, "img", "icon-128.png"),
         ...forceOutput,

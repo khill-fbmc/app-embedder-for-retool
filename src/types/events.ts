@@ -1,8 +1,11 @@
 export type MyEvents = {
-  GET_INNER_HTML: {
-    in: {
-      selector: string;
-    };
-    out: string;
-  };
+  ON_INSTALLED: SimpleEvent;
+  OPEN_OPTIONS: SimpleEvent;
+  RELOAD_RETOOL_EMBED: SimpleEvent;
+};
+
+type Nothing = void | undefined | {};
+type SimpleEvent = {
+  in: Nothing;
+  out: Nothing;
 };

@@ -12,6 +12,7 @@ type Props = {
 
 const RetoolFrame: React.FC<Props> = ({ title, domain, app, version, env }) => {
   const url = retoolUrl({ app, version, domain, env }).embed();
+
   return (
     <iframe
       id="retool-frame"

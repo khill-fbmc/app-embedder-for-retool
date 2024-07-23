@@ -1,46 +1,82 @@
+import { TypedEmitter } from "tiny-typed-emitter";
+
 type Options = Record<string, unknown>;
 
-type Hook = <T>(obj?: Options) => T | Promise<T>;
-
-type Hooks = "preSet" | "postSet" | "preGet" | "postGet";
-
-const hooks: Record<Hooks, Hook | undefined> = {
-  preSet: undefined,
-  postSet: undefined,
-  preGet: undefined,
-  postGet: undefined,
-};
-
-export const preSetHook = (hook: Hook) => (hooks.preSet = hook);
-export const postSetHook = (hook: Hook) => (hooks.postSet = hook);
-export const preGetHook = (hook: Hook) => (hooks.preGet = hook);
-export const postGetHook = (hook: Hook) => (hooks.postGet = hook);
-
 // Saves a single option to chrome.storage
-export const set = async <T extends Options>(obj: T): Promise<T> => {
+export const set = async <T extends Options>(input: T) => {
   const { promise, resolve, reject } = Promise.withResolvers<T>();
-  let payload = obj;
-  if (hooks.preSet) {
-    payload = await hooks.preSet(payload);
+  try {
+    chrome.storage.sync.set(input, () => resolve(input));
+  } catch (e) {
+    reject(e);
   }
-  chrome.storage.sync.set(payload, () => {
-    if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-    resolve(obj);
-  });
-  return promise.then(async (settings) => {
-    return hooks.postSet ? await hooks.postSet(settings) : settings;
-  });
+  return promise;
 };
 
 // Restores a single option from chrome.storage
 export const get = async <T extends Options>(): Promise<T> => {
   const { promise, resolve, reject } = Promise.withResolvers<T>();
-  if (hooks.preGet) await hooks.preGet();
-  chrome.storage.sync.get(null, (items: Options) => {
-    if (chrome.runtime.lastError) reject(chrome.runtime.lastError);
-    resolve(items as T);
-  });
-  return promise.then(async (settings) => {
-    return hooks.postGet ? await hooks.postGet(settings) : settings;
-  });
+  try {
+    chrome.storage.sync.get(undefined, (items: Options) => resolve(items as T));
+  } catch (e) {
+    reject(e);
+  }
+  return promise;
+};
+
+/**
+ *
+ */
+export class StorageManager<T extends Options> {
+  private _updateHandler: ((data: T) => void) | null = null;
+
+  constructor() {
+    chrome.runtime.onMessage.addListener((message) => {
+      (async () => {
+        await this._handleMessage(message);
+      })();
+      return true;
+    });
+  }
+
+  public onUpdate(callback: (data: T) => void) {
+    this._updateHandler = callback;
+  }
+
+  public async save(input: T) {
+    const { promise, resolve, reject } = Promise.withResolvers<T>();
+    try {
+      chrome.storage.sync.set(input, () => {
+        resolve(input);
+      });
+    } catch (e) {
+      reject(e);
+    }
+    return promise.then((saved) => {
+      chrome.runtime.sendMessage({ source: "storage", event: "update", data: saved });
+    });
+  }
+
+  public async load(): Promise<T> {
+    const { promise, resolve, reject } = Promise.withResolvers<T>();
+    try {
+      chrome.storage.sync.get(undefined, (saved: Options) => resolve(saved as T));
+    } catch (e) {
+      reject(e);
+    }
+    return promise;
+  }
+
+  private _handleMessage(message: any) {
+    const msg = message as StorageUpdated<T>;
+    if (msg?.source === "storage" && msg?.event === "update" && this._updateHandler) {
+      this._updateHandler(msg.data);
+    }
+  }
+}
+
+type StorageUpdated<T> = {
+  source: "storage";
+  event: "update";
+  data: T;
 };

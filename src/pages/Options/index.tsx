@@ -12,10 +12,5 @@ const container = document.getElementById("app-container");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 
 storage.get<ExtensionSettings>().then((settings) => {
-  root.render(
-    <Options
-      title={"Settings"}
-      settings={settings}
-    />
-  );
+  root.render(<Options settings={settings} />);
 });

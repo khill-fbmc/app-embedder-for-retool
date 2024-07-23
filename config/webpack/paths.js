@@ -24,8 +24,8 @@ module.exports = {
   entryPaths: {
     panel: path.join(panelPath, "index.tsx"),
     options: path.join(optionsPath, "index.tsx"),
-    background: path.join(backgroundPath, "index.js"),
-    contentScript: path.join(contentPath, "index.js"),
+    background: path.join(backgroundPath, "index.ts"),
+    contentScript: path.join(contentPath, "index.ts"),
   },
   htmlTemplates: {
     panel: path.join(panelPath, "index.html"),

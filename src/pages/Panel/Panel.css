@@ -5,6 +5,7 @@ body {
 .container {
   height: 100vh;
   color: #ffffff;
+  overflow-y: hidden;
 
   iframe {
     border: 0;

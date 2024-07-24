@@ -1,33 +1,8 @@
-import { TypedEmitter } from "tiny-typed-emitter";
+import type { ExtensionSettings } from "../types";
 
 type Options = Record<string, unknown>;
 
-// Saves a single option to chrome.storage
-export const set = async <T extends Options>(input: T) => {
-  const { promise, resolve, reject } = Promise.withResolvers<T>();
-  try {
-    chrome.storage.sync.set(input, () => resolve(input));
-  } catch (e) {
-    reject(e);
-  }
-  return promise;
-};
-
-// Restores a single option from chrome.storage
-export const get = async <T extends Options>(): Promise<T> => {
-  const { promise, resolve, reject } = Promise.withResolvers<T>();
-  try {
-    chrome.storage.sync.get(undefined, (items: Options) => resolve(items as T));
-  } catch (e) {
-    reject(e);
-  }
-  return promise;
-};
-
-/**
- *
- */
-export class StorageManager<T extends Options> {
+class ChromeStorage<T extends Options> {
   private _updateHandler: ((data: T) => void) | null = null;
 
   constructor() {
@@ -74,6 +49,8 @@ export class StorageManager<T extends Options> {
     }
   }
 }
+
+export const storage = new ChromeStorage<Required<ExtensionSettings>>();
 
 type StorageUpdated<T> = {
   source: "storage";

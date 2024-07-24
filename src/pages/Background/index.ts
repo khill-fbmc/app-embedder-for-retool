@@ -1,5 +1,5 @@
 import * as MessageBroker from "../../lib/chrome.messages";
-import * as storage from "../../lib/chrome.storage";
+import { storage } from "../../lib/chrome.storage";
 import { log } from "../../lib/logger";
 
 import type { ExtensionSettings } from "../../types";
@@ -20,13 +20,15 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   log("Loading Settings");
 
-  const options = await storage.get<ExtensionSettings>();
+  const options = await storage.load();
   if (!options?.domain) {
-    await storage.set<ExtensionSettings>({
+    await storage.save({
       domain: undefined,
       app: undefined,
       env: "production",
       version: "latest",
+      workflowUrl: "",
+      workflowApiKey: "",
     });
 
     log("Default settings set.");

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert } from "react-bootstrap";
+import { Alert, FormCheck, ToggleButton } from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -14,7 +14,7 @@ import useSWR, { useSWRConfig } from "swr";
 import { useRetoolUrl } from "../../hooks/useRetoolUrl";
 import { useWorkflow } from "../../hooks/useWorkflow";
 import * as MessageBroker from "../../lib/chrome.messages";
-import { StorageManager } from "../../lib/chrome.storage";
+import { storage } from "../../lib/chrome.storage";
 import { log } from "../../lib/logger";
 
 import type { Environment, RetoolUrlConfig, RetoolVersion } from "../../lib/RetoolURL";
@@ -25,7 +25,7 @@ type Props = {
 };
 
 const OptionsForm: React.FC<Props> = ({ settings }) => {
-  const storage = new StorageManager<ExtensionSettings>();
+  const [useWorkflowList, setUseWorkflowList] = useState(false);
 
   const {
     data: remoteAppList,
@@ -105,23 +105,31 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 App Name{"  "}
                 <span className="d-inline ml-2 text-danger">(required)</span>
               </Form.Label>
-              {/* <Form.Control
-                value={app}
-                onChange={(e) => setApp(e.target.value)}
-              /> */}
-              <Form.Select
-                value={app}
-                onChange={(e) => setApp(e.target.value as Environment)}
-              >
-                {remoteAppList?.map((appName) => (
-                  <option
-                    key={appName}
-                    value={appName}
-                  >
-                    {appName}
-                  </option>
-                ))}
-              </Form.Select>
+              {useWorkflowList ? (
+                <Form.Select
+                  value={app}
+                  disabled={isLoading}
+                  onChange={(e) => setApp(e.target.value as Environment)}
+                >
+                  {isLoading ? (
+                    <option value="loading">Fetching...</option>
+                  ) : (
+                    remoteAppList?.map((appName) => (
+                      <option
+                        key={appName}
+                        value={appName}
+                      >
+                        {appName}
+                      </option>
+                    ))
+                  )}
+                </Form.Select>
+              ) : (
+                <Form.Control
+                  value={app}
+                  onChange={(e) => setApp(e.target.value)}
+                />
+              )}
               <Form.Text className="text-muted">
                 Use the "Share" button in the editor and copy the name / id from the URL after
                 "app/"
@@ -190,19 +198,25 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
 
             <Accordion defaultActiveKey="0">
               <Accordion.Item eventKey="0">
-                <Accordion.Header>App Name Provider</Accordion.Header>
+                <Accordion.Header>
+                  <div className="d-flex gap-2">
+                    <i className="bi bi-cloud"></i>
+                    Workflow App Name Provider
+                  </div>
+                </Accordion.Header>
                 <Accordion.Body>
                   <Form.Group
                     className="mb-4"
                     controlId="workflowUrl"
                   >
                     <p className="text-muted">
-                      Use these fields to enable a Retool Workflow to provide a list of apps to
-                      select from
+                      Enable this feature to swap the <code>App Name</code> from an input field,
+                      into a dynamic list fetched from a Retool Workflow.
                     </p>
                     <Form.Label>Workflow URL</Form.Label>
                     <Form.Control
                       value={workflowUrl}
+                      disabled={!useWorkflowList}
                       onChange={(e) => setWorkflowUrl(e.target.value)}
                     />
                     <Form.Text className="text-muted">
@@ -218,26 +232,25 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                     <Form.Control
                       type="password"
                       value={workflowApiKey}
+                      disabled={!useWorkflowList}
                       onChange={(e) => setWorkflowApiKey(e.target.value)}
                     />
                     <Form.Text className="text-muted">Copy this value from Retool</Form.Text>
                   </Form.Group>
 
                   <Container className="d-flex justify-content-end">
-                    {/* <Button
-                      variant="primary"
-                      title={`Refetch app name list`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        console.log("mutating");
-                        mutate();
-                      }}
+                    <Button
+                      variant={useWorkflowList ? "warning" : "success"}
+                      title={`Enable using a workflow to provide the app name list`}
+                      onClick={() => setUseWorkflowList((old) => !old)}
                     >
-                      Reload App List
-                    </Button> */}
+                      {useWorkflowList ? "Disable Feature" : "Enable Provider"}
+                    </Button>
                   </Container>
-                  {isLoading ? (
-                    <p className="text-muted">⚙️ Fetching...</p>
+                  {!useWorkflowList ? (
+                    <p className="text-muted">❌ Disabled</p>
+                  ) : isLoading ? (
+                    <p className="text-muted">🚀 Fetching...</p>
                   ) : remoteAppList ? (
                     <p className="text-muted">
                       ✅ Success. Loaded {remoteAppList.length} app names.
@@ -248,11 +261,11 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-            <div className="d-flex gap-4 justify-content-end">
+            <div className="d-flex gap-4 justify-content-center">
               <Button
                 variant="success"
                 type="submit"
-                className="mt-4"
+                className="mt-4 px-5"
                 onClick={(e) => {
                   e.preventDefault();
                   handleSaveSettings();

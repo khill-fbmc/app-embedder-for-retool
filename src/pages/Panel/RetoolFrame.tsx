@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useRetoolUrl } from "../../hooks/useRetoolUrl";
-import { StorageManager } from "../../lib/chrome.storage";
-import { retoolUrl } from "../../lib/RetoolURL";
+import { storage } from "../../lib/chrome.storage";
 
 import type { Environment, RetoolVersion } from "../../lib/RetoolURL";
-import type { ExtensionSettings } from "../../types";
 
 type Props = {
   domain: string;
@@ -15,8 +13,6 @@ type Props = {
 };
 
 const RetoolFrame: React.FC<Props> = (settings) => {
-  const storage = new StorageManager<ExtensionSettings>();
-
   const { url, setApp, setEnv, setDomain, setVersion } = useRetoolUrl(settings);
 
   storage.onUpdate((settings) => {

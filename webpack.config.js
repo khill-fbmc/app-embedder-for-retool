@@ -8,6 +8,9 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 module.exports = {
   mode: process.env.NODE_ENV || "development",
   entry: entryPaths,
+  devServer: {
+    hot: true,
+  },
   output: {
     filename: "[name].bundle.js",
     path: outputPath,

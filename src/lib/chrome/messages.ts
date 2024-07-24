@@ -1,20 +1,25 @@
-import { log } from "./logger";
+import { log } from "../logger";
+import { getActiveTab } from "./tabs";
 
-import type { MyEvents } from "../types";
+import type { MyEvents } from "../../types";
+
+const MESSAGE_TAG = "MessageBroker" as const;
 
 const handlers: Handlers<keyof MyEvents> = {};
 
 // Initialize the event emitter to start listening for messages
-export function init(): void {
+function init(): void {
   log("Initializing MessageBroker");
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    handleMessage(message, sender).then(sendResponse);
+    if (message?.__tag === MESSAGE_TAG) {
+      handleMessage(message, sender).then(sendResponse);
+    }
     return true;
   });
 }
 
 // Register an event handler for a specific event type
-export function on<K extends keyof MyEvents>(event: K, handler: EventHandler<K>): void {
+function on<K extends keyof MyEvents>(event: K, handler: EventHandler<K>): void {
   log(`Registering Handler: "${event}"`);
   if (!handlers[event]) {
     handlers[event] = [];
@@ -23,65 +28,69 @@ export function on<K extends keyof MyEvents>(event: K, handler: EventHandler<K>)
 }
 
 // Emit an event with the specified payload and get a response using chrome.tabs.sendMessage
-export async function emit<K extends keyof MyEvents>(
+async function emit<K extends keyof MyEvents>(
   event: K,
-  payload: EventInput<K>,
-  reply: (response: EventHandlerOutput<K>) => void
+  payload?: EventInput<K>,
+  reply?: (response: EventHandlerOutput<K>) => void
 ): Promise<void> {
-  log(`Emitting Event: "${event}"`, payload);
+  const taggedData = Object.assign(payload || {}, { __tag: MESSAGE_TAG });
+  log(`Emitting To Tabs: "${event}"`, taggedData);
   const tab = await getActiveTab();
   if (tab?.id) {
-    sendMessageToTab(tab.id, event, payload, reply);
+    sendMessageToTab(tab.id, event, taggedData, reply);
   } else {
-    reply({ error: "There was no active tab found" });
+    reply?.({ error: "There was no active tab found" });
   }
 }
 
 // Emit an event with the specified payload and get a response using chrome.runtime.sendMessage
-export async function emitWorker<K extends keyof MyEvents>(
+async function emitWorker<K extends keyof MyEvents>(
   event: K,
-  payload: EventInput<K>,
-  reply: (response: EventHandlerOutput<K>) => void
+  payload?: EventInput<K>,
+  reply?: (response: EventHandlerOutput<K>) => void
 ): Promise<void> {
-  log(`Emitting Event: "${event}"`, payload);
-  sendMessageToRuntime(event, payload, reply);
+  const taggedData = Object.assign(payload ?? {}, { __tag: MESSAGE_TAG });
+  log(`Emitting To Runtime: "${event}"`, taggedData);
+  sendMessageToRuntime(event, taggedData, reply);
 }
 
 // Internal method to send a message to a tab and handle the response
-function sendMessageToTab<K extends keyof MyEvents>(
+async function sendMessageToTab<K extends keyof MyEvents>(
   tabId: number,
   event: K,
-  payload: EventInput<K>,
-  reply: (response: EventHandlerOutput<K>) => void
-): void {
-  chrome.tabs.sendMessage(tabId, { event, payload }, (response: EventOutput<K>) => {
-    handleSendMessageResponse(response, reply);
-  });
+  payload?: EventInput<K>,
+  reply?: (response: EventHandlerOutput<K>) => void
+): Promise<void> {
+  const response = (await chrome.tabs.sendMessage(tabId, {
+    event,
+    payload,
+  })) as EventOutput<K>;
+  handleSendMessageResponse(response, reply);
 }
 
 // Internal method to send a message to the runtime and handle the response
 function sendMessageToRuntime<K extends keyof MyEvents>(
   event: K,
-  payload: EventInput<K>,
-  reply: (response: EventHandlerOutput<K>) => void
+  payload?: EventInput<K>,
+  reply?: (response: EventHandlerOutput<K>) => void
 ): void {
-  chrome.runtime.sendMessage({ event, payload }, (response: EventOutput<K>) => {
-    handleSendMessageResponse(response, reply);
-  });
+  const response = chrome.runtime.sendMessage({ event, payload }) as EventOutput<K>;
+  handleSendMessageResponse(response, reply);
 }
 
 // Common handler for message responses
 function handleSendMessageResponse<K extends keyof MyEvents>(
   response: EventOutput<K>,
-  reply: (response: EventHandlerOutput<K>) => void
+  reply?: (response: EventHandlerOutput<K>) => void
 ): void {
-  const lastError = chrome.runtime.lastError;
+  // @ts-expect-error depreciated?
+  const lastError = chrome.runtime?.lastError;
   if (lastError) {
-    reply({ error: `${lastError.message}` });
+    reply?.({ error: `${lastError.message}` });
   } else if (response && (response as any).error) {
-    reply({ error: (response as any).error });
+    reply?.({ error: (response as any).error });
   } else {
-    reply(response);
+    reply?.(response);
   }
 }
 
@@ -90,7 +99,7 @@ async function handleMessage(
   message: { event: keyof MyEvents; payload: unknown },
   sender: chrome.runtime.MessageSender
 ): Promise<unknown> {
-  log(`Handling Message: ${message.event}`, message.payload);
+  log(`Message Passed:`, message);
   const eventHandlers = handlers[message.event];
   if (eventHandlers) {
     try {
@@ -110,10 +119,12 @@ async function handleMessage(
   }
 }
 
-async function getActiveTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tab;
-}
+export const messages = {
+  init,
+  on,
+  emit,
+  emitWorker,
+};
 
 export type EventInput<K extends keyof MyEvents> = MyEvents[`${K}`]["in"];
 export type EventOutput<K extends keyof MyEvents> = MyEvents[`${K}`]["out"];

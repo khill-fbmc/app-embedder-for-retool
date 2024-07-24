@@ -4,9 +4,13 @@
 
 > @TODO: Work on Publishing to the Chrome Store
 
+!["Options Page Screenshot"](/screenshots/options.png?raw=true "Screenshot of the extension's options page")
+!["Workflow App Name Provider Screenshot"](/screenshots/workflow.png?raw=true "Screenshot of the extension's workflow feature")
+
 ## Installing and Running
 
 ### Using this:
+
 1. Download the [latest release](https://github.com/khill-fbmc/chrome-ext-retool-embedder/releases).
 2. Extract the zip.
 3. You will get a `build` folder.

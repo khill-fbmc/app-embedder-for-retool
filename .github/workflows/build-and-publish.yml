@@ -17,11 +17,20 @@ jobs:
       - name: Set short git commit SHA
         id: vars
         run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          shortSha=$(git rev-parse --short ${{ github.sha }})
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          echo "COMMIT_SHORT_SHA=$shortSha" >> $GITHUB_ENV
+          echo "COMMIT_BRANCH=$branch" >> $GITHUB_ENV
+          echo "ZIP_FILE=retool-embedder-$branch-$shortSha" >> $GITHUB_ENV
 
-      - name: Confirm git commit SHA output
-        run: "echo 'SHORT HASH=${{ env.COMMIT_SHORT_SHA }}'"
+      - name: Confirm env.COMMIT_SHORT_SHA
+        run: "echo 'env.COMMIT_SHORT_SHA === ${{ env.COMMIT_SHORT_SHA }}'"
+
+      - name: Confirm env.COMMIT_BRANCH
+        run: "echo 'env.COMMIT_BRANCH === ${{ env.COMMIT_BRANCH }}'"
+
+      - name: Confirm env.ZIP_FILE
+        run: "echo 'env.ZIP_FILE === ${{ env.ZIP_FILE }}'"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -32,18 +41,18 @@ jobs:
         run: |-
           npm ci
           npm run build
-          zip -r retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip build
+          zip -r ${{ env.ZIP_FILE }}.zip build
 
       - name: Archive retool-embedder Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: retool-embedder-${{ env.COMMIT_SHORT_SHA }}
-          path: retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip
+          name: ${{ env.ZIP_FILE }}
+          path: ${{ env.ZIP_FILE }}.zip
 
-      - name: Archive retool-embedder Artifact
+      - name: Create and publish release
         uses: ncipollo/release-action@v1
         with:
-          tag: "ci-${{ env.COMMIT_SHORT_SHA }}"
-          commit: "main"
-          artifacts: "retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip"
-          body: "# Retool Embedder CI Build\n## retool-embedder-${{ env.COMMIT_SHORT_SHA }}.zip"
+          tag: "ci-${{ env.COMMIT_BRANCH }}-${{ env.COMMIT_SHORT_SHA }}"
+          commit: ${{ env.COMMIT_BRANCH }}
+          artifacts: "${{ env.ZIP_FILE }}.zip"
+          body: "# Retool Embedder - CI Build\n## ${{ env.ZIP_FILE }}.zip"

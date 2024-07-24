@@ -4,7 +4,8 @@
 
 > @TODO: Work on Publishing to the Chrome Store
 
-![Options](/screenshots/options.png?raw=true "Screenshot of the extension's options page")
+!["Options Page Screenshot"](/screenshots/options.png?raw=true "Screenshot of the extension's options page")
+!["Workflow App Name Provider Screenshot"](/screenshots/workflow.png?raw=true "Screenshot of the extension's workflow feature")
 
 ## Installing and Running
 

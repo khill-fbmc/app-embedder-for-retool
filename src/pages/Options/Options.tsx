@@ -1,6 +1,6 @@
 import "./Options.css";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -10,8 +10,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 
 import retoolLogo from "../../assets/img/retool.svg";
-import * as MessageBroker from "../../lib/chrome.messages";
-import { log } from "../../lib/logger";
+import { messages } from "../../lib/chrome";
 import OptionsForm from "./OptionsForm";
 
 import type { ExtensionSettings } from "../../types";
@@ -42,7 +41,7 @@ const Options: React.FC<Props> = ({ settings }) => {
               className="btn-sm btn-outline"
               onClick={(e) => {
                 e.preventDefault();
-                MessageBroker.emitWorker("OPEN_OPTIONS");
+                messages.emitWorker("OPEN_OPTIONS");
                 return false;
               }}
             >

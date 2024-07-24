@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useRetoolUrl } from "../../hooks/useRetoolUrl";
-import { storage } from "../../lib/chrome.storage";
+import { storage } from "../../lib/chrome";
 
 import type { Environment, RetoolVersion } from "../../lib/RetoolURL";
 

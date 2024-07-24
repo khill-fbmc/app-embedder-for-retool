@@ -1,4 +1,4 @@
-import type { ExtensionSettings } from "../types";
+import type { ExtensionSettings } from "../../types";
 
 type Options = Record<string, unknown>;
 

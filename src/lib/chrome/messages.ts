@@ -1,12 +1,14 @@
-import { log } from "./logger";
+import { log } from "../logger";
+import { getActiveTab } from "./tabs";
 
-import type { MyEvents } from "../types";
+import type { MyEvents } from "../../types";
 
 const MESSAGE_TAG = "MessageBroker" as const;
+
 const handlers: Handlers<keyof MyEvents> = {};
 
 // Initialize the event emitter to start listening for messages
-export function init(): void {
+function init(): void {
   log("Initializing MessageBroker");
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message?.__tag === MESSAGE_TAG) {
@@ -17,7 +19,7 @@ export function init(): void {
 }
 
 // Register an event handler for a specific event type
-export function on<K extends keyof MyEvents>(event: K, handler: EventHandler<K>): void {
+function on<K extends keyof MyEvents>(event: K, handler: EventHandler<K>): void {
   log(`Registering Handler: "${event}"`);
   if (!handlers[event]) {
     handlers[event] = [];
@@ -26,7 +28,7 @@ export function on<K extends keyof MyEvents>(event: K, handler: EventHandler<K>)
 }
 
 // Emit an event with the specified payload and get a response using chrome.tabs.sendMessage
-export async function emit<K extends keyof MyEvents>(
+async function emit<K extends keyof MyEvents>(
   event: K,
   payload?: EventInput<K>,
   reply?: (response: EventHandlerOutput<K>) => void
@@ -42,12 +44,12 @@ export async function emit<K extends keyof MyEvents>(
 }
 
 // Emit an event with the specified payload and get a response using chrome.runtime.sendMessage
-export async function emitWorker<K extends keyof MyEvents>(
+async function emitWorker<K extends keyof MyEvents>(
   event: K,
   payload?: EventInput<K>,
   reply?: (response: EventHandlerOutput<K>) => void
 ): Promise<void> {
-  const taggedData = Object.assign(payload || {}, { __tag: MESSAGE_TAG });
+  const taggedData = Object.assign(payload ?? {}, { __tag: MESSAGE_TAG });
   log(`Emitting To Runtime: "${event}"`, taggedData);
   sendMessageToRuntime(event, taggedData, reply);
 }
@@ -117,10 +119,12 @@ async function handleMessage(
   }
 }
 
-export async function getActiveTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  return tab;
-}
+export const messages = {
+  init,
+  on,
+  emit,
+  emitWorker,
+};
 
 export type EventInput<K extends keyof MyEvents> = MyEvents[`${K}`]["in"];
 export type EventOutput<K extends keyof MyEvents> = MyEvents[`${K}`]["out"];

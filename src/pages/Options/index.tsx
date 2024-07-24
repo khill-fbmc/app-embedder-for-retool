@@ -3,7 +3,7 @@ import "./index.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
-import { storage } from "../../lib/chrome.storage";
+import { storage } from "../../lib/chrome";
 import Options from "./Options";
 
 const container = document.getElementById("app-container");

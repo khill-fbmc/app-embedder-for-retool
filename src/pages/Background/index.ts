@@ -1,18 +1,13 @@
-import * as MessageBroker from "../../lib/chrome.messages";
-import { storage } from "../../lib/chrome.storage";
+import { getActiveTab, messages, storage } from "../../lib/chrome";
 import { log } from "../../lib/logger";
 
-import type { ExtensionSettings } from "../../types";
+messages.init();
 
-MessageBroker.init();
-
-MessageBroker.on("OPEN_OPTIONS", () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs.length > 0) {
-      const tabId = tabs[0].id;
-      chrome.sidePanel.open({ tabId });
-    }
-  });
+messages.on("OPEN_OPTIONS", async () => {
+  const tab = await getActiveTab();
+  if (tab) {
+    chrome.sidePanel.open({ tabId: tab.id });
+  }
 });
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -21,10 +16,11 @@ chrome.runtime.onInstalled.addListener(async () => {
   log("Loading Settings");
 
   const options = await storage.load();
+
   if (!options?.domain) {
     await storage.save({
-      domain: undefined,
-      app: undefined,
+      domain: "",
+      app: "",
       env: "production",
       version: "latest",
       workflowUrl: "",
@@ -33,6 +29,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
     log("Default settings set.");
 
-    MessageBroker.emitWorker("ON_INSTALLED", undefined, () => {});
+    messages.emitWorker("ON_INSTALLED", undefined, () => {});
   }
 });

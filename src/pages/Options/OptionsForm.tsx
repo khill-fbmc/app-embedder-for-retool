@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Alert, FormCheck, ToggleButton } from "react-bootstrap";
+import React, { useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -9,13 +8,10 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 // eslint-disable-next-line import/no-named-as-default
 import toast, { Toaster } from "react-hot-toast";
-import useSWR, { useSWRConfig } from "swr";
 
 import { useRetoolUrl } from "../../hooks/useRetoolUrl";
 import { useWorkflow } from "../../hooks/useWorkflow";
-import * as MessageBroker from "../../lib/chrome.messages";
-import { storage } from "../../lib/chrome.storage";
-import { log } from "../../lib/logger";
+import { messages, storage } from "../../lib/chrome";
 
 import type { Environment, RetoolUrlConfig, RetoolVersion } from "../../lib/RetoolURL";
 import type { ExtensionSettings } from "../../types";
@@ -28,7 +24,8 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
   const [useWorkflowList, setUseWorkflowList] = useState(false);
 
   const {
-    data: remoteAppList,
+    data: appList,
+    error: appListError,
     isLoading,
     workflowUrl,
     workflowApiKey,
@@ -62,7 +59,7 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
         toast.success("Settings saved.");
       } else {
         toast.success(`Settings saved.\nReloading "${app}"`);
-        MessageBroker.emitWorker("RELOAD_RETOOL_EMBED");
+        messages.emitWorker("RELOAD_RETOOL_EMBED");
       }
       storage.load();
     } catch (e) {
@@ -114,7 +111,7 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                   {isLoading ? (
                     <option value="loading">Fetching...</option>
                   ) : (
-                    remoteAppList?.map((appName) => (
+                    appList?.map((appName) => (
                       <option
                         key={appName}
                         value={appName}
@@ -251,10 +248,10 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                     <p className="text-muted">❌ Disabled</p>
                   ) : isLoading ? (
                     <p className="text-muted">🚀 Fetching...</p>
-                  ) : remoteAppList ? (
-                    <p className="text-muted">
-                      ✅ Success. Loaded {remoteAppList.length} app names.
-                    </p>
+                  ) : appListError ? (
+                    <p className="text-danger">💣 Error! {appListError}</p>
+                  ) : appList ? (
+                    <p className="text-muted">✅ Success. Loaded {appList.length} app names.</p>
                   ) : (
                     <p className="text-muted">‼️ No results returned.</p>
                   )}

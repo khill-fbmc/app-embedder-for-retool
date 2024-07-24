@@ -9,7 +9,6 @@ const outputPath = path.resolve(projectRoot, "build");
 
 const panelPath = path.join(pagesPath, "Panel");
 const optionsPath = path.join(pagesPath, "Options");
-const contentPath = path.join(pagesPath, "Content");
 const backgroundPath = path.join(pagesPath, "Background");
 
 const manifestPath = path.join(sourceRoot, "manifest.json");
@@ -25,7 +24,6 @@ module.exports = {
     panel: path.join(panelPath, "index.tsx"),
     options: path.join(optionsPath, "index.tsx"),
     background: path.join(backgroundPath, "index.ts"),
-    contentScript: path.join(contentPath, "index.ts"),
   },
   htmlTemplates: {
     panel: path.join(panelPath, "index.html"),

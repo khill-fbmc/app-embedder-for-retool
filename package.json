@@ -9,9 +9,11 @@
   "license": "MIT",
   "scripts": {
     "build": "node utils/build.js",
+    "bundle": "npm run build && npm run zip",
     "fix": "eslint src --fix",
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "start": "node utils/webserver.js"
+    "start": "node utils/webserver.js",
+    "zip": "zip -r dist/RetoolEmbedderChromeExtension.zip build"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

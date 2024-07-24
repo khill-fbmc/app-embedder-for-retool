@@ -25,6 +25,7 @@ const RetoolFrame: React.FC<Props> = (settings) => {
   return (
     <iframe
       id="retool-frame"
+      className="full-height"
       title={"Retool Embedder"}
       src={url}
       width="100%"

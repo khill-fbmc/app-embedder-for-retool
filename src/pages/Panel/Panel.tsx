@@ -12,17 +12,18 @@ interface Props {
 }
 
 const Panel: React.FC<Props> = ({ settings }) => {
-  return (
-    <Container>
-      {settings.app === "" ? (
-        <Alert variant="warning">
-          There is no domain set for your Retool instance. Open the{" "}
-          <Alert.Link href={"#"}>an example link</Alert.Link>. Give it a click if
-        </Alert>
-      ) : (
-        <RetoolFrame {...settings} />
-      )}
+  return settings.app === "" ? (
+    <Container
+      id="error"
+      className="full-height"
+    >
+      <Alert variant="warning">
+        There is no domain set for your Retool instance. Open the{" "}
+        <Alert.Link href={"#"}>an example link</Alert.Link>. Give it a click if
+      </Alert>
     </Container>
+  ) : (
+    <RetoolFrame {...settings} />
   );
 };
 

@@ -1,13 +1,12 @@
-body {
-  background-color: #242424;
+.full-height {
+  height: 100vh;
+  overflow-y: hidden;
 }
 
-.container {
-  height: 100vh;
-  color: #ffffff;
-  overflow-y: hidden;
+#retool-frame {
+  border: 0;
+}
 
-  iframe {
-    border: 0;
-  }
+#error {
+  color: #ffffff;
 }

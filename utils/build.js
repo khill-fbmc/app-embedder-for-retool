@@ -3,16 +3,14 @@ process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
 process.env.ASSET_PATH = "/";
 
-const webpack = require("webpack");
 const path = require("node:path");
-const fs = require("node:fs");
+const webpack = require("webpack");
 const ZipPlugin = require("zip-webpack-plugin");
 
 const config = require("../webpack.config");
+const packageInfo = require("../package.json");
 
 config.mode = "production";
-
-const packageInfo = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 
 config.plugins = (config.plugins || []).concat(
   new ZipPlugin({

@@ -10,7 +10,6 @@ import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 
 import retoolLogo from "../../assets/img/retool.svg";
-import { messages } from "../../lib/chrome";
 import OptionsForm from "./OptionsForm";
 
 import type { ExtensionSettings } from "../../types";
@@ -35,18 +34,18 @@ const Options: React.FC<Props> = ({ settings }) => {
             </div>
           </Navbar.Brand>
           <Form className="form-inline">
-            <Button
+            {/* <Button
               variant="secondary"
               type="button"
               className="btn-sm btn-outline"
               onClick={(e) => {
                 e.preventDefault();
-                messages.emitWorker("OPEN_OPTIONS");
+                console.log("clicked");
                 return false;
               }}
             >
               Open Side Panel
-            </Button>
+            </Button> */}
           </Form>
         </Container>
       </Navbar>

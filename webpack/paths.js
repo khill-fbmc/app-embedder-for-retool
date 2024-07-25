@@ -1,6 +1,6 @@
 const path = require("node:path");
 
-const projectRoot = path.join(__dirname, "..", "..");
+const projectRoot = path.join(__dirname, "..");
 const sourceRoot = path.join(projectRoot, "src");
 
 const assetsPath = path.join(sourceRoot, "assets");

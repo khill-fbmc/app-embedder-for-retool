@@ -9,6 +9,21 @@
   "host_permissions": [
     "https://*.retool.com/*"
   ],
+  "icons": {
+    "128": "retool_logo.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "logo_32.png",
+        "logo_64.png",
+        "logo_128.png",
+        "logo_256.png",
+        "retool_logo.png"
+      ],
+      "matches": []
+    }
+  ],
   "options_page": "options.html",
   "background": {
     "service_worker": "background.bundle.js"
@@ -20,18 +35,13 @@
   "side_panel": {
     "default_path": "panel.html"
   },
-  "icons": {
-    "128": "retool_logo.png"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "logo_32.png",
-        "logo_64.png",
-        "logo_128.png",
-        "logo_256.png"
-      ],
-      "matches": []
+  "commands": {
+    "Open-side-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Open side panel"
     }
-  ]
+  }
 }

@@ -41,8 +41,9 @@ const commonPlugins = [
   copyManifestPlugin,
   new CopyWebpackPlugin({
     patterns: [
-      assetImgPattern("icon-128.png"),
       assetImgPattern("icon-34.png"),
+      assetImgPattern("icon-128.png"),
+      assetImgPattern("retool_logo.png"),
       ...[32, 64, 128, 256].map((size) => assetImgPattern(`logo_${size}.png`)),
     ],
   }),

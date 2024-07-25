@@ -1,7 +1,7 @@
-const { entryPaths, outputPath } = require("./config/webpack/paths");
-const plugins = require("./config/webpack/plugins");
-const { moduleRules, fileExtensions } = require("./config/webpack/rules");
-const optimization = require("./config/webpack/optimization");
+const plugins = require("./webpack/plugins");
+const optimization = require("./webpack/optimization");
+const { entryPaths, outputPath } = require("./webpack/paths");
+const { moduleRules, fileExtensions } = require("./webpack/rules");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 

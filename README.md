@@ -6,7 +6,6 @@
    <img src="src/assets/img/logo_256.png" />
 </p>
 <br />
-<br />
 
 ## TODOs
 
@@ -19,17 +18,11 @@
 
 ## Installing and Running
 
-### Using this:
-
-1. Download the [latest release](https://github.com/khill-fbmc/chrome-ext-retool-embedder/releases).
-2. Extract the zip.
-3. You will get a `build` folder.
-4. Rename / Move this folder somewhere that is easy to reference.
-5. Load your extension on Chrome following:
-   1. Access `chrome://extensions/`
-   2. Check `Developer mode`
-   3. Click on `Load unpacked extension`
-   4. Select the folder from step `4` folder.
+1. ~~Download and install from the [Chrome Web Store](https://chromewebstore.google.com/)~~. (not yet!)
+2. Fill in your instance name.
+3. Fill in an app name.
+4. Open the SidePanel by clicking the button
+5. Profit!
 
 ### Hacking On This:
 

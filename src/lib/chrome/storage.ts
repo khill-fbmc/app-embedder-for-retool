@@ -6,7 +6,7 @@ class ChromeStorage<T extends Options> {
   private _updateHandler: ((data: T) => void) | null = null;
 
   constructor() {
-    chrome.runtime.onMessage.addListener((message) => {
+    chrome.runtime.onMessage.addListener((message: unknown) => {
       (async () => {
         await this._handleMessage(message);
       })();

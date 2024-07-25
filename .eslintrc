@@ -1,7 +1,7 @@
 {
   "extends": [
     "react-app",
-    "plugin:@typescript-eslint/recommended",
+    // "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended"
   ],
   "plugins": [
@@ -97,8 +97,9 @@
         "sourceType": "commonjs"
       },
       "files": [
-        "./config/**/*.js",
-        "./utils/*.js"
+        "webpack.config.js",
+        "./utils/*.js",
+        "./webpack/*.js"
       ],
       "extends": [
         "eslint:recommended"

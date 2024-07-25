@@ -8,13 +8,19 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 const { manifestPath, outputPath, assetsPath, htmlTemplates } = require("./paths");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-const forceOutput = { to: outputPath, force: true };
+
+const assetImgPattern = (filename) => ({
+  from: path.join(assetsPath, "img", filename),
+  to: outputPath,
+  force: true,
+});
 
 const copyManifestPlugin = new CopyWebpackPlugin({
   patterns: [
     {
       from: manifestPath,
-      ...forceOutput,
+      to: outputPath,
+      force: true,
       transform: (content) =>
         Buffer.from(
           JSON.stringify({
@@ -35,14 +41,10 @@ const commonPlugins = [
   copyManifestPlugin,
   new CopyWebpackPlugin({
     patterns: [
-      {
-        from: path.join(assetsPath, "img", "icon-128.png"),
-        ...forceOutput,
-      },
-      {
-        from: path.join(assetsPath, "img", "icon-34.png"),
-        ...forceOutput,
-      },
+      assetImgPattern("icon-34.png"),
+      assetImgPattern("icon-128.png"),
+      assetImgPattern("retool_logo.png"),
+      ...[32, 64, 128, 256].map((size) => assetImgPattern(`logo_${size}.png`)),
     ],
   }),
 ].filter(Boolean);

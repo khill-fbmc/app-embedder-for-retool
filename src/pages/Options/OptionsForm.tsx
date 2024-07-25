@@ -11,7 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { useRetoolUrl } from "../../hooks/useRetoolUrl";
 import { useWorkflow } from "../../hooks/useWorkflow";
-import { messages, storage } from "../../lib/chrome";
+import { storage } from "../../lib/chrome";
 
 import type { Environment, RetoolUrlConfig, RetoolVersion } from "../../lib/RetoolURL";
 import type { ExtensionSettings } from "../../types";
@@ -55,12 +55,7 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
         workflowUrl,
         workflowApiKey,
       });
-      if (reloadFrame === false) {
-        toast.success("Settings saved.");
-      } else {
-        toast.success(`Settings saved.\nReloading "${app}"`);
-        messages.emitWorker("RELOAD_RETOOL_EMBED");
-      }
+      toast.success("Settings saved.");
       storage.load();
     } catch (e) {
       const error = e as Error;

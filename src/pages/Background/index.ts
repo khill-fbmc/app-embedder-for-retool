@@ -1,19 +1,17 @@
-import { getActiveTab, messages, storage } from "../../lib/chrome";
-import { log } from "../../lib/logger";
+/// <reference path="../../../node_modules/chrome-types/index.d.ts" />
 
-messages.init();
+import { storage } from "../../lib/chrome";
 
-messages.on("OPEN_OPTIONS", async () => {
-  const tab = await getActiveTab();
-  if (tab) {
+chrome.commands.onCommand.addListener(() => {
+  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
     chrome.sidePanel.open({ tabId: tab.id });
-  }
+  });
 });
 
 chrome.runtime.onInstalled.addListener(async () => {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 
-  log("Loading Settings");
+  console.log("Loading Settings");
 
   const options = await storage.load();
 
@@ -27,8 +25,6 @@ chrome.runtime.onInstalled.addListener(async () => {
       workflowApiKey: "",
     });
 
-    log("Default settings set.");
-
-    messages.emitWorker("ON_INSTALLED", undefined, () => {});
+    console.log("Default settings set.");
   }
 });

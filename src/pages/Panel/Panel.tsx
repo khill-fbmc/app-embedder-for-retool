@@ -1,9 +1,9 @@
 import "./Panel.css";
 
 import React from "react";
-import { Alert, Container } from "react-bootstrap";
 
 import RetoolFrame from "./RetoolFrame";
+import UnsetSettingError from "./UnsetSettingError";
 
 import type { ExtensionSettings } from "../../types";
 
@@ -12,16 +12,10 @@ interface Props {
 }
 
 const Panel: React.FC<Props> = ({ settings }) => {
-  return settings.app === "" ? (
-    <Container
-      id="error"
-      className="full-height"
-    >
-      <Alert variant="warning">
-        There is no domain set for your Retool instance. Open the{" "}
-        <Alert.Link href={"#"}>an example link</Alert.Link>. Give it a click if
-      </Alert>
-    </Container>
+  return settings.domain === "" ? (
+    <UnsetSettingError unsetSetting="Instance Name" />
+  ) : settings.app === "" ? (
+    <UnsetSettingError unsetSetting="App Name" />
   ) : (
     <RetoolFrame {...settings} />
   );

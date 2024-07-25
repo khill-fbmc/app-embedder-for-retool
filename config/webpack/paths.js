@@ -5,7 +5,7 @@ const sourceRoot = path.join(projectRoot, "src");
 
 const assetsPath = path.join(sourceRoot, "assets");
 const pagesPath = path.join(sourceRoot, "pages");
-const outputPath = path.resolve(projectRoot, "build");
+const outputPath = path.join(projectRoot, "build");
 
 const panelPath = path.join(pagesPath, "Panel");
 const optionsPath = path.join(pagesPath, "Options");

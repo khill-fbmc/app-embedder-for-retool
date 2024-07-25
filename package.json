@@ -9,11 +9,9 @@
   "license": "MIT",
   "scripts": {
     "build": "node utils/build.js",
-    "bundle": "npm run build && npm run zip",
     "fix": "eslint src --fix",
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "start": "node utils/webserver.js",
-    "zip": "zip -r dist/RetoolEmbedderChromeExtension.zip build"
+    "start": "node utils/webserver.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -24,6 +22,7 @@
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
+    "simple-git": "^3.25.0",
     "swr": "^2.2.5",
     "tiny-typed-emitter": "^2.1.0"
   },
@@ -48,6 +47,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "eslint": "^8.57.0",
+    "eslint-config-node": "^4.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-import-resolver-typescript": "^3.6.1",

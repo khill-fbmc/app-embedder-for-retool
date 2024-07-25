@@ -15,19 +15,21 @@
   },
   "action": {
     "default_title": "Click to open Retool Embedder",
-    "default_icon": "icon-34.png"
+    "default_icon": "retool_logo.png"
   },
   "side_panel": {
     "default_path": "panel.html"
   },
   "icons": {
-    "128": "icon-128.png"
+    "128": "retool_logo.png"
   },
   "web_accessible_resources": [
     {
       "resources": [
-        "icon-34.png",
-        "icon-128.png"
+        "logo_32.png",
+        "logo_64.png",
+        "logo_128.png",
+        "logo_256.png"
       ],
       "matches": []
     }

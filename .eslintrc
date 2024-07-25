@@ -1,6 +1,7 @@
 {
   "extends": [
     "react-app",
+    "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended"
   ],
   "plugins": [
@@ -88,5 +89,25 @@
         ]
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "commonjs"
+      },
+      "files": [
+        "./config/**/*.js",
+        "./utils/*.js"
+      ],
+      "extends": [
+        "eslint:recommended"
+      ],
+      "rules": {
+        "no-var": "error",
+        "prefer-const": "error",
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ]
 }

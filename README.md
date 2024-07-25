@@ -1,8 +1,18 @@
-<img src="src/assets/img/icon-128.png" width="64"/>
-
 # Chrome Extension - Retool Embedder
 
-> @TODO: Work on Publishing to the Chrome Store
+<br />
+<br />
+<p align="center" width="100%">
+   <img src="src/assets/img/logo_256.png" />
+</p>
+<br />
+<br />
+
+## TODOs
+
+- [ ] Publish to the Chrome Store
+
+## Screenshots
 
 !["Options Page Screenshot"](/screenshots/options.png?raw=true "Screenshot of the extension's options page")
 !["Workflow App Name Provider Screenshot"](/screenshots/workflow.png?raw=true "Screenshot of the extension's workflow feature")
@@ -36,3 +46,4 @@
 ---
 
 Based off the work in [Chrome Extension Boilerplate React](https://github.com/lxieyang/chrome-extension-boilerplate-react.git)
+Thanks to [kevenodes](https://www.vecteezy.com/members/kevenodes) @ vecteezy for the free crate svg.

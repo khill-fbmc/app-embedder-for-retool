@@ -30,5 +30,5 @@ module.exports = {
   infrastructureLogging: {
     level: "info",
   },
-  devtool: isDevelopment ? "cheap-module-source-map" : false,
+  devtool: isDevelopment ? "cheap-module-source-map" : undefined,
 };

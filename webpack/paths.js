@@ -6,6 +6,7 @@ const sourceRoot = path.join(projectRoot, "src");
 const assetsPath = path.join(sourceRoot, "assets");
 const pagesPath = path.join(sourceRoot, "pages");
 const outputPath = path.join(projectRoot, "build");
+const zipPath = path.join(projectRoot, "dist");
 
 const panelPath = path.join(pagesPath, "Panel");
 const optionsPath = path.join(pagesPath, "Options");
@@ -20,6 +21,7 @@ module.exports = {
   pagesPath,
   manifestPath,
   outputPath,
+  zipPath,
   entryPaths: {
     panel: path.join(panelPath, "index.tsx"),
     options: path.join(optionsPath, "index.tsx"),

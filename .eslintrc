@@ -94,10 +94,10 @@
     {
       "parserOptions": {
         "ecmaVersion": "latest",
-        "sourceType": "commonjs"
+        "sourceType": "script"
       },
       "files": [
-        "webpack.config.js",
+        "./webpack.config.js",
         "./utils/*.js",
         "./webpack/*.js"
       ],

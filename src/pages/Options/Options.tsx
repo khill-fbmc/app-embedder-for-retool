@@ -2,7 +2,6 @@ import "./Options.css";
 
 import React from "react";
 import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";

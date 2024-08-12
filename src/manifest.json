@@ -38,10 +38,10 @@
   "commands": {
     "Open-side-panel": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Y",
-        "mac": "Command+Shift+Y"
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R"
       },
-      "description": "Open side panel"
+      "description": "Open Retool App Embedder"
     }
   }
 }

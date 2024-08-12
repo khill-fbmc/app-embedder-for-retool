@@ -1,6 +1,6 @@
 {
-  "name": "chrome-ext-retool-embedder",
-  "version": "0.3.0",
+  "name": "app-embedder-for-retool",
+  "version": "1.0.0",
   "description": "Host Retool apps in Chrome's SidePanel",
   "repository": {
     "type": "git",

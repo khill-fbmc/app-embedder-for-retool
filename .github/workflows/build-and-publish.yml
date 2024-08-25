@@ -2,7 +2,7 @@ name: Build & Publish Extension
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "devel"]
 
 jobs:
   build-retool-embedder:
@@ -19,9 +19,10 @@ jobs:
         run: |
           shortSha=$(git rev-parse --short ${{ github.sha }})
           branch=$(git rev-parse --abbrev-ref HEAD)
+          zipfile=$(cat package.json | jq -r '"\(.name)-\(.version)"')
           echo "COMMIT_SHORT_SHA=$shortSha" >> $GITHUB_ENV
           echo "COMMIT_BRANCH=$branch" >> $GITHUB_ENV
-          echo "ZIP_FILE=retool-embedder-$branch-$shortSha" >> $GITHUB_ENV
+          echo "ZIP_FILE=$zipfile" >> $GITHUB_ENV
 
       - name: Confirm env.COMMIT_SHORT_SHA
         run: "echo 'env.COMMIT_SHORT_SHA === ${{ env.COMMIT_SHORT_SHA }}'"
@@ -41,7 +42,6 @@ jobs:
         run: |-
           npm ci
           npm run build
-          zip -r ${{ env.ZIP_FILE }}.zip build
 
       - name: Archive retool-embedder Artifact
         uses: actions/upload-artifact@v4

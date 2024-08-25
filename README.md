@@ -1,4 +1,4 @@
-# Chrome Extension - Retool Embedder
+# App Embedder for Retool
 
 <br />
 <br />

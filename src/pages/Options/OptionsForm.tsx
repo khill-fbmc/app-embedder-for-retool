@@ -188,6 +188,21 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
               <Form.Text className="text-muted">Does this look correct?</Form.Text>
             </Form.Group>
 
+            <div className="d-flex justify-content-center">
+              <Button
+                variant="success"
+                type="submit"
+                className="fs-5 mb-5 px-5"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSaveSettings();
+                  return false;
+                }}
+              >
+                Save
+              </Button>
+            </div>
+
             <Accordion defaultActiveKey="0">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
@@ -232,11 +247,11 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
 
                   <Container className="d-flex justify-content-end">
                     <Button
-                      variant={useWorkflowList ? "warning" : "success"}
+                      variant={useWorkflowList ? "warning" : "primary"}
                       title={`Enable using a workflow to provide the app name list`}
                       onClick={() => setUseWorkflowList((old) => !old)}
                     >
-                      {useWorkflowList ? "Disable Feature" : "Enable Provider"}
+                      {useWorkflowList ? "Disable Provider" : "Enable Provider"}
                     </Button>
                   </Container>
                   {!useWorkflowList ? (
@@ -248,25 +263,11 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                   ) : appList ? (
                     <p className="text-muted">✅ Success. Loaded {appList.length} app names.</p>
                   ) : (
-                    <p className="text-muted">‼️ No results returned.</p>
+                    <p className="text-muted">🔦 No results returned.</p>
                   )}
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-            <div className="d-flex gap-4 justify-content-center">
-              <Button
-                variant="success"
-                type="submit"
-                className="mt-4 px-5"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSaveSettings();
-                  return false;
-                }}
-              >
-                Save
-              </Button>
-            </div>
           </Form>
         </Col>
       </Row>

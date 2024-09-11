@@ -1,6 +1,7 @@
 /// <reference path="../../../node_modules/chrome-types/index.d.ts" />
 
 import { storage } from "../../lib/chrome";
+import { log } from "../../lib/logger";
 
 chrome.commands.onCommand.addListener(() => {
   chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
@@ -11,7 +12,7 @@ chrome.commands.onCommand.addListener(() => {
 chrome.runtime.onInstalled.addListener(async () => {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 
-  console.log("Loading Settings");
+  log("Loading Settings");
 
   const options = await storage.load();
 
@@ -25,6 +26,6 @@ chrome.runtime.onInstalled.addListener(async () => {
       workflowApiKey: "",
     });
 
-    console.log("Default settings set.");
+    log("Default settings set.");
   }
 });

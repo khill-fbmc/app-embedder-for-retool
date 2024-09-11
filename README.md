@@ -5,6 +5,7 @@
 <p align="center" width="100%">
    <img src="src/assets/img/logo_256.png" />
 </p>
+Host a Retool app directly in Chome's Sidebar
 <br />
 
 ## TODOs
@@ -39,4 +40,4 @@
 ---
 
 Based off the work in [Chrome Extension Boilerplate React](https://github.com/lxieyang/chrome-extension-boilerplate-react.git)
-Thanks to [kevenodes](https://www.vecteezy.com/members/kevenodes) @ vecteezy for the free crate svg.
+[Icons created by iconixar - Flaticon](https://www.flaticon.com/free-icons/business-and-finance "business and finance icons")

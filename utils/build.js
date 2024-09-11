@@ -8,14 +8,14 @@ const ZipPlugin = require("zip-webpack-plugin");
 
 const config = require("../webpack.config");
 const packageInfo = require("../package.json");
-const { zipPath } = require("../webpack/paths");
+const { distPath } = require("../webpack/paths");
 
 config.mode = "production";
 
 config.plugins = (config.plugins || []).concat(
   new ZipPlugin({
     filename: `${packageInfo.name}-${packageInfo.version}.zip`,
-    path: zipPath,
+    path: distPath,
   })
 );
 

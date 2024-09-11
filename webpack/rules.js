@@ -7,7 +7,14 @@ const fileExtensions = ["jpg", "jpeg", "png", "gif", "eot", "otf", "svg", "ttf",
 const moduleRules = [
   {
     test: /\.(css|scss)$/,
-    use: ["style-loader", "css-loader", { loader: "sass-loader", options: { sourceMap: true } }],
+    use: [
+      "style-loader",
+      "css-loader",
+      {
+        loader: "sass-loader",
+        options: { sourceMap: true },
+      },
+    ],
   },
   {
     test: new RegExp(`.(${fileExtensions.join("|")})$`),
@@ -15,7 +22,7 @@ const moduleRules = [
     exclude: /node_modules/,
   },
   {
-    test: /\.html$/,
+    test: /\.html$/i,
     loader: "html-loader",
     exclude: /node_modules/,
   },

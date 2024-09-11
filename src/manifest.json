@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Retool Embedder",
-  "description": "An extension to embed Retool apps in the sidebar",
+  "name": "App Embedder for Retool",
+  "description": "Embed Retool apps directly into Chrome's sidebar",
   "permissions": [
     "storage",
     "sidePanel"
@@ -10,12 +10,15 @@
     "https://*.retool.com/*"
   ],
   "icons": {
-    "128": "retool_logo.png"
+    "48": "logo_48.png",
+    "128": "logo_128.png",
+    "256": "logo_256.png"
   },
   "web_accessible_resources": [
     {
       "resources": [
         "logo_32.png",
+        "logo_48.png",
         "logo_64.png",
         "logo_128.png",
         "logo_256.png",
@@ -25,15 +28,18 @@
     }
   ],
   "options_page": "options.html",
+  "side_panel": {
+    "default_path": "panel.html"
+  },
   "background": {
     "service_worker": "background.bundle.js"
   },
   "action": {
-    "default_title": "Click to open Retool Embedder",
-    "default_icon": "retool_logo.png"
-  },
-  "side_panel": {
-    "default_path": "panel.html"
+    "default_title": "Open App Embedder for Retool",
+    "default_icon": {
+      "16": "logo_16.png",
+      "32": "logo_32.png"
+    }
   },
   "commands": {
     "Open-side-panel": {
@@ -41,7 +47,7 @@
         "default": "Ctrl+Shift+R",
         "mac": "Command+Shift+R"
       },
-      "description": "Open Retool App Embedder"
+      "description": "Open App Embedder for Retool"
     }
   }
 }

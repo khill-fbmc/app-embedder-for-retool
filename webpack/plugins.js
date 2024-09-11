@@ -5,15 +5,16 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
-const { manifestPath, outputPath, assetsPath, htmlTemplates } = require("./paths");
+const packageInfo = require("../package.json");
+const { imagePatterns } = require("./assets");
+const { manifestPath, outputPath, pagesPath } = require("./paths");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const assetImgPattern = (filename) => ({
-  from: path.join(assetsPath, "img", filename),
-  to: outputPath,
-  force: true,
-});
+const properAppName = packageInfo.name
+  .split("-")
+  .map((x) => `${x[0].toUpperCase()}${x.slice(1)}`)
+  .join(" ");
 
 const copyManifestPlugin = new CopyWebpackPlugin({
   patterns: [
@@ -39,27 +40,22 @@ const commonPlugins = [
   new webpack.ProgressPlugin(),
   new webpack.EnvironmentPlugin(["NODE_ENV"]),
   copyManifestPlugin,
-  new CopyWebpackPlugin({
-    patterns: [
-      assetImgPattern("icon-34.png"),
-      assetImgPattern("icon-128.png"),
-      assetImgPattern("retool_logo.png"),
-      ...[32, 64, 128, 256].map((size) => assetImgPattern(`logo_${size}.png`)),
-    ],
-  }),
+  new CopyWebpackPlugin({ patterns: imagePatterns }),
 ].filter(Boolean);
 
 const htmlPlugins = [
   new HtmlWebpackPlugin({
-    template: htmlTemplates.options,
-    filename: "options.html",
-    chunks: ["options"],
+    filename: "panel.html",
+    template: path.join(pagesPath, "Panel", "index.ejs"),
+    templateParameters: { title: properAppName },
+    chunks: ["panel"],
     cache: false,
   }),
   new HtmlWebpackPlugin({
-    template: htmlTemplates.panel,
-    filename: "panel.html",
-    chunks: ["panel"],
+    filename: "options.html",
+    template: path.join(pagesPath, "Options", "index.ejs"),
+    templateParameters: { title: properAppName },
+    chunks: ["options"],
     cache: false,
   }),
 ];

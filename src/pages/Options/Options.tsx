@@ -8,6 +8,7 @@ import Form from "react-bootstrap/Form";
 import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 
+import extLogo from "../../assets/img/logo_32.png";
 import retoolLogo from "../../assets/img/retool.svg";
 import OptionsForm from "./OptionsForm";
 
@@ -21,31 +22,20 @@ const Options: React.FC<Props> = ({ settings }) => {
   return (
     <>
       <Navbar className="bg-body-tertiary">
-        <Container>
-          <Navbar.Brand href="#home">
-            <div className="d-flex align-items-center gap-3">
-              <img
-                id="retool-logo"
-                alt="Retool Logo"
-                src={retoolLogo}
-              />
-              <div className="mt-1">App Embedder - Settings</div>
-            </div>
-          </Navbar.Brand>
-          <Form className="form-inline">
-            {/* <Button
-              variant="secondary"
-              type="button"
-              className="btn-sm btn-outline"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("clicked");
-                return false;
-              }}
-            >
-              Open Side Panel
-            </Button> */}
-          </Form>
+        <Container className="">
+          <div className="d-flex mx-auto align-items-center gap-3">
+            <img
+              id="retool-logo"
+              alt="Retool Logo"
+              src={extLogo}
+            />
+            <div className="fs-2">App Embedder For</div>
+            <img
+              id="retool-logo"
+              alt="Retool Logo"
+              src={retoolLogo}
+            />
+          </div>
         </Container>
       </Navbar>
       <Container className="px-5 mt-4">

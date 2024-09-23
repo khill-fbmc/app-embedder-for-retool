@@ -1,10 +1,10 @@
-import { storage } from "../lib/chrome";
 import { log } from "../lib/logger";
+import { storage } from "../lib/storage";
 
-import type { ExtensionSettings } from "../types";
+import type { SerializedSettings } from "../lib/storage";
 
 export function useChromeStorage() {
-  const saveSettings = async (settings: Required<ExtensionSettings>) => {
+  const saveSettings = async (settings: Required<SerializedSettings>) => {
     await storage.save(settings);
     log("Settings Saved", settings);
   };

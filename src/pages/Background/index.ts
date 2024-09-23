@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/chrome-types/index.d.ts" />
 
-import { storage } from "../../lib/chrome";
 import { log } from "../../lib/logger";
+import { storage } from "../../lib/storage";
 
 chrome.commands.onCommand.addListener(() => {
   chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
@@ -24,6 +24,8 @@ chrome.runtime.onInstalled.addListener(async () => {
       version: "latest",
       workflowUrl: "",
       workflowApiKey: "",
+      urlParams: [],
+      hashParams: [],
     });
 
     log("Default settings set.");

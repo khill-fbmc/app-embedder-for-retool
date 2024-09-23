@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -11,17 +11,18 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { useRetoolUrl } from "../../hooks/useRetoolUrl";
 import { useWorkflow } from "../../hooks/useWorkflow";
-import { storage } from "../../lib/chrome";
+import { type SerializedSettings, storage } from "../../lib/storage";
 
 import type { Environment, RetoolUrlConfig, RetoolVersion } from "../../lib/RetoolURL";
-import type { ExtensionSettings } from "../../types";
+import type { ParamEntry } from "../../types";
 
 type Props = {
-  settings: ExtensionSettings;
+  settings: SerializedSettings;
 };
 
 const OptionsForm: React.FC<Props> = ({ settings }) => {
-  const [useWorkflowList, setUseWorkflowList] = useState(false);
+  const [urlParams, setUrlParams] = useState<ParamEntry[]>(settings.urlParams);
+  const [hashParams, setHashParams] = useState<ParamEntry[]>(settings.hashParams);
 
   const {
     data: appList,
@@ -33,11 +34,23 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
     setWorkflowApiKey,
   } = useWorkflow(`${settings?.workflowUrl}`, `${settings.workflowApiKey}`);
 
+  const [useWorkflowList, setUseWorkflowList] = useState(false);
   const { url, domain, app, version, env, setApp, setDomain, setVersion, setEnv } = useRetoolUrl(
     settings as RetoolUrlConfig
   );
 
-  const handleSaveSettings = async (reloadFrame = false) => {
+  const composedUrl = useMemo(() => {
+    const _url = new URL(url);
+    const _hashParams = new URLSearchParams();
+    urlParams.forEach(({ param, value }) => _url.searchParams.append(param, value));
+    hashParams.forEach(({ param, value }) => _hashParams.append(param, value));
+    if (hashParams.length === 0) {
+      return `${_url.toString()}`;
+    }
+    return `${_url.toString()}#${_hashParams.toString()}`;
+  }, [url, urlParams, hashParams]);
+
+  const handleSaveSettings = async () => {
     if (domain === "") {
       toast.error("Your Retool instance name cannot be blank, please fill in this field.");
       return;
@@ -54,6 +67,8 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
         env,
         workflowUrl,
         workflowApiKey,
+        urlParams,
+        hashParams,
       });
       toast.success("Settings saved.");
       storage.load();
@@ -89,6 +104,7 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 This is your registered domain / instance name.
               </Form.Text>
             </Form.Group>
+
             <Form.Group
               className="mb-4"
               controlId="app"
@@ -127,6 +143,7 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 "app/"
               </Form.Text>
             </Form.Group>
+
             <Row>
               <Col>
                 <Form.Group
@@ -166,6 +183,126 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 </Form.Group>
               </Col>
             </Row>
+
+            <Row>
+              <Col>
+                <Form.Group
+                  className="d-flex flex-column mb-4 gap-1"
+                  controlId="url-params"
+                >
+                  <Form.Label>Extra URL Params</Form.Label>
+                  {urlParams.length > 0 &&
+                    urlParams.map((entry) => {
+                      return (
+                        <ParamInputGroup
+                          {...entry}
+                          key={`URL_${entry.index}`}
+                          onKeyChange={({ index, target, data }) => {
+                            setUrlParams((old) => {
+                              return old.map((entry) => {
+                                if (entry.index === index) {
+                                  entry[target] = data;
+                                }
+                                return entry;
+                              });
+                            });
+                          }}
+                          onValueChange={(paramKey) => {
+                            setUrlParams((old) => {
+                              return old;
+                            });
+                          }}
+                          onRemove={(indexToRemove) => {
+                            setUrlParams((old) => {
+                              return old.filter((entry) => {
+                                return entry.index !== indexToRemove;
+                              });
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  <Button
+                    variant="primary"
+                    className="btn-sm mx-5"
+                    onClick={(e) => {
+                      setUrlParams((old) => {
+                        const index = old.length === 0 ? 1 : old[old.length - 1]?.index + 1;
+                        return [
+                          ...old,
+                          {
+                            index,
+                            param: `uParam${index}`,
+                            value: `uValue${index}`,
+                          },
+                        ];
+                      });
+                    }}
+                  >
+                    Add +
+                  </Button>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group
+                  className="d-flex flex-column mb-4 gap-1"
+                  controlId="hash-params"
+                >
+                  <Form.Label>Hash Params</Form.Label>
+                  {hashParams.length > 0 &&
+                    hashParams.map((entry) => {
+                      return (
+                        <ParamInputGroup
+                          {...entry}
+                          key={`HASH_${entry.index}`}
+                          onKeyChange={({ index, target, data }) => {
+                            setHashParams((old) => {
+                              return old.map((entry) => {
+                                if (entry.index === index) {
+                                  entry[target] = data;
+                                }
+                                return entry;
+                              });
+                            });
+                          }}
+                          onValueChange={(paramKey) => {
+                            setHashParams((old) => {
+                              return old;
+                            });
+                          }}
+                          onRemove={(indexToRemove) => {
+                            setHashParams((old) => {
+                              return old.filter((entry) => {
+                                return entry.index !== indexToRemove;
+                              });
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  <Button
+                    variant="primary"
+                    className="btn-sm mx-5"
+                    onClick={(e) => {
+                      setHashParams((old) => {
+                        const index = old.length === 0 ? 1 : old[old.length - 1]?.index + 1;
+                        return [
+                          ...old,
+                          {
+                            index,
+                            param: `hParam${index}`,
+                            value: `hValue${index}`,
+                          },
+                        ];
+                      });
+                    }}
+                  >
+                    Add +
+                  </Button>
+                </Form.Group>
+              </Col>
+            </Row>
+
             <Form.Group
               className="mb-4"
               controlId="url"
@@ -175,12 +312,12 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
                 <Form.Control
                   disabled
                   readOnly
-                  value={url}
+                  value={composedUrl}
                 ></Form.Control>
                 <Button
                   variant="secondary"
                   title={`Open "${app}" in a new Tab`}
-                  onClick={() => window?.open(url, "_blank")}
+                  onClick={() => window?.open(composedUrl, "_blank")}
                 >
                   <i className="bi bi-box-arrow-up-right"></i>
                 </Button>
@@ -277,3 +414,51 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
 };
 
 export default OptionsForm;
+
+type ParamUpdate = {
+  index: number;
+  target: "param" | "value";
+  data: string;
+};
+
+const ParamInputGroup: React.FC<{
+  index: number;
+  param: string;
+  value: string;
+  onRemove: (index: number) => void;
+  onKeyChange: (data: ParamUpdate) => void;
+  onValueChange: (data: ParamUpdate) => void;
+}> = ({ index, param, value, onKeyChange, onValueChange, onRemove }) => {
+  return (
+    <InputGroup>
+      <Form.Control
+        value={param}
+        placeholder="key"
+        onChange={(e) => {
+          onKeyChange({
+            index,
+            target: "param",
+            data: e.target.value,
+          });
+        }}
+      />
+      <Form.Control
+        value={value}
+        placeholder="value"
+        onChange={(e) => {
+          onValueChange({
+            index,
+            target: "value",
+            data: e.target.value,
+          });
+        }}
+      />
+      <Button
+        variant="danger"
+        onClick={(e) => onRemove(index)}
+      >
+        <i className="bi bi-trash"></i>
+      </Button>
+    </InputGroup>
+  );
+};

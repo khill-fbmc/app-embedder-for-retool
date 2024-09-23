@@ -4,7 +4,6 @@ import React from "react";
 import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 
@@ -12,10 +11,10 @@ import extLogo from "../../assets/img/logo_32.png";
 import retoolLogo from "../../assets/img/retool.svg";
 import OptionsForm from "./OptionsForm";
 
-import type { ExtensionSettings } from "../../types";
+import type { SerializedSettings } from "../../lib/storage";
 
 interface Props {
-  settings: ExtensionSettings;
+  settings: SerializedSettings;
 }
 
 const Options: React.FC<Props> = ({ settings }) => {

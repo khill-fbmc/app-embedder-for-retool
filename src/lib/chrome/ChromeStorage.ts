@@ -1,8 +1,12 @@
-import type { ExtensionSettings } from "../../types";
-
 type Options = Record<string, unknown>;
 
-class ChromeStorage<T extends Options> {
+export type StorageUpdated<T> = {
+  source: "storage";
+  event: "update";
+  data: T;
+};
+
+export class ChromeStorage<T extends Options> {
   private _updateHandler: ((data: T) => void) | null = null;
 
   constructor() {
@@ -49,11 +53,3 @@ class ChromeStorage<T extends Options> {
     }
   }
 }
-
-export const storage = new ChromeStorage<Required<ExtensionSettings>>();
-
-type StorageUpdated<T> = {
-  source: "storage";
-  event: "update";
-  data: T;
-};

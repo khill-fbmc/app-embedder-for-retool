@@ -6,3 +6,47 @@ html {
     padding: 0;
     margin: 0;
 }
+
+body {
+    height: 100vh;
+}
+
+.tab-content {
+    height: calc(100vh - (162px)) !important;
+    overflow-y: auto;
+}
+
+ul.nav-tabs li button:hover {
+    background-color: #FFF;
+}
+
+dt,
+dd {
+    display: block;
+    float: left;
+}
+
+dt {
+    margin: 0;
+    padding: 0;
+    clear: both;
+}
+
+dt::after {
+    content: "=";
+    margin: 0 3px;
+}
+
+
+.environment-production {
+    background-color: rgb(60, 146, 220);
+}
+
+.environment-staging {
+    background-color: rgb(233, 171, 17);
+    color: black;
+}
+
+.environment-development {
+    background-color: rgb(71, 139, 96);
+}

@@ -5,3 +5,9 @@ export const log = (...args: unknown[]) => {
     ...args
   );
 };
+
+export const debug = (...args: unknown[]) => {
+  if (process.env.DEBUG) {
+    log(...args);
+  }
+};

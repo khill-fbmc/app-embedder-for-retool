@@ -16,30 +16,28 @@ const properAppName = packageInfo.name
   .map((x) => `${x[0].toUpperCase()}${x.slice(1)}`)
   .join(" ");
 
-const copyManifestPlugin = new CopyWebpackPlugin({
-  patterns: [
-    {
-      from: manifestPath,
-      to: outputPath,
-      force: true,
-      transform: (content) =>
-        Buffer.from(
-          JSON.stringify({
-            description: process.env.npm_package_description,
-            version: process.env.npm_package_version,
-            ...JSON.parse(content.toString()),
-          })
-        ),
-    },
-  ],
-});
-
 const commonPlugins = [
   isDevelopment && new ReactRefreshWebpackPlugin(),
   new CleanWebpackPlugin({ verbose: false }),
   new webpack.ProgressPlugin(),
-  new webpack.EnvironmentPlugin(["NODE_ENV"]),
-  copyManifestPlugin,
+  new webpack.EnvironmentPlugin(["NODE_ENV", "DEBUG"]),
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: manifestPath,
+        to: outputPath,
+        force: true,
+        transform: (content) =>
+          Buffer.from(
+            JSON.stringify({
+              description: process.env.npm_package_description,
+              version: process.env.npm_package_version,
+              ...JSON.parse(content.toString()),
+            })
+          ),
+      },
+    ],
+  }),
   new CopyWebpackPlugin({ patterns: imagePatterns }),
 ].filter(Boolean);
 

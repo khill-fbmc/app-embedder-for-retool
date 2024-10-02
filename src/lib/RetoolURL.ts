@@ -1,3 +1,7 @@
+export function retoolAppToUrl() {
+  //
+}
+
 export function retoolUrl(config: RetoolUrlConfig) {
   const url = new RetoolURL(config.domain);
   if (config?.app) url.app(config.app);

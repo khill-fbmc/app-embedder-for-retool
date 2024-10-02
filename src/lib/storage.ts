@@ -1,10 +1,11 @@
 import { ChromeStorage } from "./chrome/ChromeStorage";
 
-import type { ExtensionSettings, ParamEntry } from "../types";
+import type { UrlParamSpec } from "../hooks/useExtensionState";
+import type { ExtensionSettings } from "../types";
 
 export type SerializedSettings = {
-  urlParams: ParamEntry[];
-  hashParams: ParamEntry[];
+  urlParams: UrlParamSpec[];
+  hashParams: UrlParamSpec[];
 } & Required<ExtensionSettings>;
 
 export const storage = new ChromeStorage<SerializedSettings>();

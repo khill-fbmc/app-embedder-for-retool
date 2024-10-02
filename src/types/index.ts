@@ -1,12 +1,7 @@
-import type { RetoolUrlConfig } from "../lib//RetoolURL";
+import type { RetoolUrlConfig } from "../lib/RetoolURL";
 
 export * from "./events";
-
-export type ParamEntry = {
-  index: number;
-  param: string;
-  value: string;
-};
+export * from "./extension";
 
 type PartialRetoolUrl = Omit<RetoolUrlConfig, "embed" | "hideNav" | "hideTimer" | "historyOffset">;
 

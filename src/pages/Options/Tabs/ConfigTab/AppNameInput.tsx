@@ -1,12 +1,14 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
 
-type Props = {
-  name: string;
-  onChange: (name: string) => void;
-};
+import { useExtensionState } from "../../../../hooks/useExtensionState";
 
-export default function AppNameInput({ name, onChange }: Props) {
+export default function AppNameInput() {
+  const getActiveApp = useExtensionState((s) => s.getActiveApp);
+  const updateActiveApp = useExtensionState((s) => s.updateActiveApp);
+
+  const app = getActiveApp();
+
   return (
     <Form.Group
       className="mb-4"
@@ -17,8 +19,8 @@ export default function AppNameInput({ name, onChange }: Props) {
         <span className="d-inline ml-2 text-danger">(required)</span>
       </Form.Label>
       <Form.Control
-        value={name}
-        onChange={(e) => onChange(e.target.value)}
+        value={app?.name}
+        onChange={(e) => updateActiveApp({ name: e.target.value })}
       />
       <Form.Text className="text-muted">
         Use the "Share" button in the editor and copy the name / id from the URL after "app/"

@@ -18,6 +18,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "clsx": "^2.1.1",
     "i18n": "^0.15.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",

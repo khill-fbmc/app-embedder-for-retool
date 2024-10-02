@@ -17,11 +17,12 @@ type State = {
 
 interface Actions {
   reset: () => void;
-  getActiveApp: () => RetoolApp | undefined;
   setDomain: (domain: State["domain"]) => void;
   setActiveApp: (name: State["domain"]) => void;
   addApp: (app: RetoolApp) => void;
-  updateApp: (name: string, app: Partial<RetoolApp>) => void;
+  updateApp: (name: string, props: Partial<RetoolApp>) => void;
+  getActiveApp: () => RetoolApp | undefined;
+  updateActiveApp: (props: Partial<RetoolApp>) => void;
 }
 
 export const STORAGE_KEY = "app-embedder-for-retool";
@@ -48,6 +49,10 @@ export const useExtensionState = create<State & Actions>()(
         }));
       },
       getActiveApp: () => get().apps.find((app) => app.name === get().activeAppName),
+      updateActiveApp: (props) => {
+        const name = get().activeAppName;
+        if (name) get().updateApp(name, props);
+      },
     }),
     {
       name: STORAGE_KEY,

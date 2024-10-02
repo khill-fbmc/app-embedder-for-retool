@@ -32,7 +32,7 @@ type Props = {
 const OptionsForm: React.FC<Props> = ({ settings }) => {
   const extensionState = useExtensionState();
   const activeAppName = useExtensionState((s) => s.activeAppName);
-  const cURL = useComposedUrl();
+
   const [urlParams, setUrlParams] = useState<UrlParamSpec[]>(settings.urlParams);
   const [hashParams, setHashParams] = useState<UrlParamSpec[]>(settings.hashParams);
 
@@ -90,10 +90,7 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
             <DomainInput />
 
             <h3 className="mt-2">Current App</h3>
-            <AppNameInput
-              name={app}
-              onChange={setApp}
-            />
+            <AppNameInput />
             <Row>
               <Col
                 xs={12}
@@ -257,11 +254,6 @@ const OptionsForm: React.FC<Props> = ({ settings }) => {
             <ComposedURL
               url={composedUrl}
               title={app}
-            />
-
-            <ComposedURL
-              url={cURL}
-              title={activeAppName}
             />
 
             <div className="d-flex justify-content-center">

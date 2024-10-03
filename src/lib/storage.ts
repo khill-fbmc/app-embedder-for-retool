@@ -1,4 +1,4 @@
-import { ChromeStorage } from "./chrome/ChromeStorage";
+import { ChromeStorage } from "./ChromeStorage";
 
 import type { UrlParamSpec } from "../hooks/useExtensionState";
 import type { ExtensionSettings } from "../types";

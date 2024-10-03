@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 
-export function useThrottle<T extends (...args: any[]) => void>(fn: T, delay: number = 1000): T {
+export function useThrottle<T extends (...args: any[]) => void>(
+  fn: T,
+  delay: number = 1000
+): T {
   const [isThrottled, setIsThrottled] = useState(false);
 
   const throttledFunction = useCallback(

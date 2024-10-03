@@ -2,7 +2,18 @@ const ReactRefreshTypeScript = require("react-refresh-typescript");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const fileExtensions = ["jpg", "jpeg", "png", "gif", "eot", "otf", "svg", "ttf", "woff", "woff2"];
+const fileExtensions = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "eot",
+  "otf",
+  "svg",
+  "ttf",
+  "woff",
+  "woff2",
+];
 
 const moduleRules = [
   {
@@ -48,7 +59,9 @@ const moduleRules = [
       {
         loader: require.resolve("babel-loader"),
         options: {
-          plugins: [isDevelopment && require.resolve("react-refresh/babel")].filter(Boolean),
+          plugins: [
+            isDevelopment && require.resolve("react-refresh/babel"),
+          ].filter(Boolean),
         },
       },
     ],

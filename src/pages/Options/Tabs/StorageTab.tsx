@@ -1,28 +1,18 @@
 import React from "react";
-import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 
-import { useExtensionState } from "../../../../hooks/useExtensionState";
-import AppCard from "./AppCard";
+import { useExtensionState } from "@/hooks/useExtensionState";
 
-import type { SerializedSettings } from "../../../../lib/storage";
+import AppCard from "../components/AppCard";
 
-type Props = {
-  settings: SerializedSettings;
-};
-
-function StorageTab({ settings }: Props) {
+function StorageTab() {
   const reset = useExtensionState((s) => s.reset);
-  const state = useExtensionState((state) => JSON.stringify(state, null, 2));
 
   const apps = useExtensionState((s) => s.apps);
   const activeApp = useExtensionState((s) => s.getActiveApp());
 
   return (
-    <Container className="px-5 mt-4">
+    <Container className="px-5 pb-5 mt-4">
       <Row>
         <Col className="offset-1 col-10">
           <Alert variant="primary">
@@ -30,10 +20,7 @@ function StorageTab({ settings }: Props) {
             Here are all your saved Retool App Definitions
             <hr />
             <div className="d-flex justify-content-end">
-              <Button
-                onClick={() => reset()}
-                variant="outline-primary"
-              >
+              <Button onClick={() => reset()} variant="outline-primary">
                 Reset State
               </Button>
             </div>
@@ -45,11 +32,7 @@ function StorageTab({ settings }: Props) {
           <></>
         ) : (
           apps.map((app) => (
-            <Col
-              md={12}
-              lg={6}
-              className="p-1"
-            >
+            <Col md={12} lg={6} className="p-1">
               <AppCard
                 key={app.name}
                 isActive={app.name === activeApp?.name}
@@ -58,12 +41,6 @@ function StorageTab({ settings }: Props) {
             </Col>
           ))
         )}
-      </Row>
-
-      <Row>
-        <Col>
-          <pre>{state}</pre>
-        </Col>
       </Row>
     </Container>
   );

@@ -29,6 +29,16 @@
   },
   "rules": {
     "prettier/prettier": "error",
+    "react/jsx-sort-props": [
+      "error",
+      {
+        "noSortAlphabetically": true,
+        "multiline": "last",
+        "reservedFirst": [
+          "key"
+        ]
+      }
+    ],
     "react/jsx-first-prop-new-line": [
       "error",
       "multiline"
@@ -36,7 +46,7 @@
     "react/jsx-max-props-per-line": [
       "error",
       {
-        "maximum": 1,
+        "maximum": 2,
         "when": "multiline"
       }
     ],

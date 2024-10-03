@@ -7,10 +7,7 @@ type Props = {
 
 const UnsetSettingError: React.FC<Props> = ({ unsetSetting }) => {
   return (
-    <Container
-      id="error"
-      className="full-height d-flex justify-content-center"
-    >
+    <Container id="error" className="full-height d-flex justify-content-center">
       <Row className="my-auto text-center">
         <Col>
           <Alert variant="warning p-5">

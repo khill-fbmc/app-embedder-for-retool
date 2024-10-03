@@ -5,8 +5,8 @@ export const INSPECTOR_APP: RetoolApp = {
   public: true,
   version: "latest",
   env: "production",
-  hash: [],
-  query: [],
+  hash: [{ index: 1, param: "example", value: "current" }],
+  query: [{ index: 1, param: "user", value: "kevin.hill" }],
 };
 
 export const DEMO_APPS: RetoolApp[] = [

@@ -3,6 +3,8 @@ const optimization = require("./webpack/optimization");
 const { entryPaths, outputPath } = require("./webpack/paths");
 const { moduleRules, fileExtensions } = require("./webpack/rules");
 
+const tsConfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = {
@@ -24,6 +26,7 @@ module.exports = {
     extensions: [".js", ".jsx", ".ts", ".tsx", ".css", ".scss"].concat(
       fileExtensions.map((ext) => `.${ext}`)
     ),
+    plugins: [new tsConfigPathsPlugin()],
   },
   plugins,
   optimization,

@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import ChromeStateStorage from "../lib/chrome/ChromeStateStorage";
-import { DEMO_APPS, INSPECTOR_APP } from "../pages/Options/EmbeddableApps";
+import ChromeStateStorage from "@/lib/ChromeStateStorage";
+import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
-import type { RetoolApp } from "../types";
+import type { RetoolApp } from "@/types";
 
 type State = {
   domain: string;
@@ -45,13 +45,19 @@ export const useExtensionState = create<State & Actions>()(
       addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
       updateApp: (name, props) => {
         set((state) => ({
-          apps: state.apps.map((app) => (app.name === name ? { ...app, ...props } : app)),
+          apps: state.apps.map((app) => {
+            return app.name === name ? { ...app, ...props } : app;
+          }),
         }));
       },
-      getActiveApp: () => get().apps.find((app) => app.name === get().activeAppName),
+      getActiveApp: () => {
+        return get().apps.find((app) => app.name === get().activeAppName);
+      },
       updateActiveApp: (props) => {
         const name = get().activeAppName;
-        if (name) get().updateApp(name, props);
+        if (name) {
+          get().updateApp(name, props);
+        }
       },
     }),
     {

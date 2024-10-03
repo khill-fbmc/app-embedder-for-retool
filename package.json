@@ -16,6 +16,7 @@
   "dependencies": {
     "@extend-chrome/messages": "^1.2.2",
     "@popperjs/core": "^2.11.8",
+    "@uiw/react-json-view": "^2.0.0-alpha.27",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "clsx": "^2.1.1",
@@ -24,9 +25,7 @@
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
-    "simple-git": "^3.25.0",
     "swr": "^2.2.5",
-    "tiny-typed-emitter": "^2.1.0",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
@@ -38,6 +37,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
     "@types/i18n": "^0.13.12",
     "@types/node": "^20.14.11",
+    "@types/prismjs": "^1.26.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.17.0",
@@ -75,6 +75,7 @@
     "template-ejs-loader": "^0.9.4",
     "terser-webpack-plugin": "^5.3.6",
     "ts-loader": "^9.4.2",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
     "type-fest": "^3.5.2",
     "typed-emitter": "^2.1.0",
     "typescript": "^5.5.3",

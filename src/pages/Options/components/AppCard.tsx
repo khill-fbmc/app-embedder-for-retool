@@ -1,11 +1,13 @@
+import "./AppCard.css";
+
 import { clsx } from "clsx";
 import React from "react";
-import { Badge, Button, Card, CardLink, Col, Container, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
-import { useComposedUrl } from "../../../../hooks/useComposedUrl";
-import { useExtensionState } from "../../../../hooks/useExtensionState";
+import { useComposedUrl } from "@/hooks/useComposedUrl";
+import { useExtensionState } from "@/hooks/useExtensionState";
 
-import type { RetoolApp } from "../../../../types";
+import type { RetoolApp } from "@/types";
 
 type Props = {
   app: RetoolApp;
@@ -29,10 +31,7 @@ function AppCard({ app, isActive }: Props) {
       >
         <div className="d-flex gap-2 align-items-center">
           {app.name}
-          <Badge
-            pill
-            bg="secondary"
-          >
+          <Badge pill bg="secondary">
             {app.version[0] === "l" ? app.version : `v${app.version}`}
           </Badge>
         </div>
@@ -42,7 +41,8 @@ function AppCard({ app, isActive }: Props) {
       </Card.Header>
       <Card.Body>
         <Card.Text>
-          Public App: <span className="text-muted">{app.public ? "Yes" : "No"}</span>
+          Public App:{" "}
+          <span className="text-muted">{app.public ? "Yes" : "No"}</span>
         </Card.Text>
         <Row>
           {app.query.length > 0 && (

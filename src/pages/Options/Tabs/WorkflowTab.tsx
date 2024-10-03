@@ -4,34 +4,26 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 
-import { useExtensionState } from "../../../hooks/useExtensionState";
-import { useWorkflow } from "../../../hooks/useWorkflow";
+import { useExtensionState } from "@/hooks/useExtensionState";
+import { useWorkflow } from "@/hooks/useWorkflow";
 
-import type { SerializedSettings } from "../../../lib/storage";
+function WorkflowTab() {
+  const workflowUrl = useExtensionState((s) => s.workflowUrl);
+  const workflowApiKey = useExtensionState((s) => s.workflowApiKey);
 
-type Props = {
-  settings: SerializedSettings;
-};
-
-const WorkflowTab: React.FC<Props> = ({ settings }) => {
-  //   const state = useExtensionState((state) => []);
   const {
     data: appList,
     error: appListError,
     isLoading,
-    workflowUrl,
-    workflowApiKey,
     setWorkflowUrl,
     setWorkflowApiKey,
-  } = useWorkflow(`${settings?.workflowUrl}`, `${settings.workflowApiKey}`);
+  } = useWorkflow(workflowUrl, workflowApiKey);
 
   const [useWorkflowList, setUseWorkflowList] = useState(false);
+
   return (
     <Container>
-      <Accordion
-        defaultActiveKey="0"
-        className="mt-2 mx-5"
-      >
+      <Accordion defaultActiveKey="0" className="shadow mt-2 mx-5">
         <Accordion.Item eventKey="0">
           <Accordion.Header>
             <div className="d-flex gap-2">
@@ -40,13 +32,10 @@ const WorkflowTab: React.FC<Props> = ({ settings }) => {
             </div>
           </Accordion.Header>
           <Accordion.Body>
-            <Form.Group
-              className="mb-4"
-              controlId="workflowUrl"
-            >
+            <Form.Group className="mb-4" controlId="workflowUrl">
               <p className="text-muted">
-                Enable this feature to swap the <code>App Name</code> from an input field, into a
-                dynamic list fetched from a Retool Workflow.
+                Enable this feature to swap the <code>App Name</code> from an
+                input field, into a dynamic list fetched from a Retool Workflow.
               </p>
               <Form.Label>Workflow URL</Form.Label>
               <Form.Control
@@ -55,14 +44,11 @@ const WorkflowTab: React.FC<Props> = ({ settings }) => {
                 onChange={(e) => setWorkflowUrl(e.target.value)}
               />
               <Form.Text className="text-muted">
-                Supply a Retool workflow URL that returns a <code>200</code> with a JSON body
-                formatted <code>{"{ apps: string[] }"}</code>
+                Supply a Retool workflow URL that returns a <code>200</code>{" "}
+                with a JSON body formatted <code>{"{ apps: string[] }"}</code>
               </Form.Text>
             </Form.Group>
-            <Form.Group
-              className="mb-4"
-              controlId="workflowApiKey"
-            >
+            <Form.Group className="mb-4" controlId="workflowApiKey">
               <Form.Label>Workflow API Key</Form.Label>
               <Form.Control
                 type="password"
@@ -70,7 +56,9 @@ const WorkflowTab: React.FC<Props> = ({ settings }) => {
                 disabled={!useWorkflowList}
                 onChange={(e) => setWorkflowApiKey(e.target.value)}
               />
-              <Form.Text className="text-muted">Copy this value from Retool</Form.Text>
+              <Form.Text className="text-muted">
+                Copy this value from Retool
+              </Form.Text>
             </Form.Group>
 
             <Container className="d-flex justify-content-end">
@@ -89,7 +77,9 @@ const WorkflowTab: React.FC<Props> = ({ settings }) => {
             ) : appListError ? (
               <p className="text-danger">💣 Error! {appListError}</p>
             ) : appList ? (
-              <p className="text-muted">✅ Success. Loaded {appList.length} app names.</p>
+              <p className="text-muted">
+                ✅ Success. Loaded {appList.length} app names.
+              </p>
             ) : (
               <p className="text-muted">🔦 No results returned.</p>
             )}
@@ -98,6 +88,6 @@ const WorkflowTab: React.FC<Props> = ({ settings }) => {
       </Accordion>
     </Container>
   );
-};
+}
 
 export default WorkflowTab;

@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import ChromeStateStorage from "@/lib/ChromeStateStorage";
 import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
-import type { RetoolApp } from "@/types";
+import type { RetoolApp } from "@/types/extension";
 
 type State = {
   domain: string;

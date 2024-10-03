@@ -1,25 +1,28 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
 
-import { useActiveApp } from "@/hooks/useActiveApp";
+import type { AppVersion } from "@/types/extension";
 
-import type { AppVersion } from "@/types";
+type Props = {
+  version: AppVersion | undefined;
+  onChange?: (version: AppVersion) => void;
+};
 
-export default function VersionInput() {
-  const { app, updateApp } = useActiveApp();
+export default function VersionInput({ version, onChange }: Props) {
+  const handleChange = onChange ?? function () {};
 
   return (
     <Form.Group className="mb-4" controlId="version">
       <Form.Label>Version</Form.Label>
       <Form.Control
-        value={app?.version}
+        value={version}
         onChange={(e) => {
           const value = e.target.value as AppVersion;
+          let version: AppVersion = "latest";
           if (/(?:[0-9]+\.){2}[0-9]+/.test(value)) {
-            updateApp({ version: value });
-          } else {
-            updateApp({ version: "latest" });
+            version = value;
           }
+          handleChange(version);
         }}
       />
       <Form.Text className="text-muted">

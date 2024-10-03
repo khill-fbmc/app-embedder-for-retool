@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { RetoolApp, UrlParamSpec } from "../types";
+import type { RetoolApp, UrlParamSpec } from "../types/extension";
 
 type Actions = {
   setAppName: (name: string) => void;

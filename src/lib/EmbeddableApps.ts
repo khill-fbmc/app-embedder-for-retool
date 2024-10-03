@@ -1,4 +1,4 @@
-import type { RetoolApp } from "../../types";
+import type { RetoolApp } from "@/types";
 
 export const INSPECTOR_APP: RetoolApp = {
   name: "app-embedder-for-retool-inspector",

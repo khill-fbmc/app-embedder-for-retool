@@ -4,7 +4,6 @@ import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import toast from "react-hot-toast";
 
 import { useActiveApp } from "@/hooks/useActiveApp";
-import { useRetoolAppStore } from "@/hooks/useRetoolAppStore";
 import { debug, log } from "@/lib/logger";
 
 import ActiveAppUrl from "../components/ActiveAppUrl";
@@ -14,12 +13,48 @@ import EnvironmentSelect from "../components/EnvironmentSelect";
 import VersionInput from "../components/VersionInput";
 
 import type { AppEnvironment, AppVersion, RetoolApp } from "@/types/extension";
+// An enum with all the types of actions to use in our reducer
+type ReducerActionKind = {
+  SET_NAME: "SET_NAME";
+  SET_VERSION: "SET_VERSION";
+  SET_ENVIRONMENT: "SET_ENVIRONMENT";
+  UPDATE_HASH: "UPDATE_HASH";
+  UPDATE_QUERY: "UPDATE_QUERY";
+};
+
+type ReducerActions = {
+  type: keyof ReducerActionKind;
+  payload: string;
+};
+
+function appReducer(app: RetoolApp, action: ReducerActions): RetoolApp {
+  debug(action);
+  const { payload } = action;
+  switch (action.type) {
+    case "SET_NAME": {
+      return { ...app, name: payload };
+    }
+    case "SET_VERSION": {
+      return { ...app, version: payload as AppVersion };
+    }
+    case "SET_ENVIRONMENT": {
+      return { ...app, env: payload as AppEnvironment };
+    }
+    case "UPDATE_HASH": {
+      return { ...app, env: payload as AppEnvironment };
+    }
+    case "UPDATE_QUERY": {
+    }
+    default: {
+      throw Error("Unknown action: " + action.type);
+    }
+  }
+}
 
 function OptionsForm() {
   const { app, updateApp } = useActiveApp();
-  const draftApp = useRetoolAppStore(Object.assign({}, app));
-
   // const [draftApp, setDraftApp] = useState(() => Object.assign({}, app));
+  const [draftApp, dispatch] = useReducer(appReducer, Object.assign({}, app));
 
   debug(draftApp);
 

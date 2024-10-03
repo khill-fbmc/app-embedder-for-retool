@@ -48,4 +48,7 @@ function runtimePromise<T = unknown>(handler: PromiseHandler<T>): Promise<T> {
 
 type Resolver<T> = (value: T | PromiseLike<T>) => void;
 
-type PromiseHandler<T> = (resolve: Resolver<T>, rejectIfRuntimeError: () => void) => void;
+type PromiseHandler<T> = (
+  resolve: Resolver<T>,
+  rejectIfRuntimeError: () => void
+) => void;

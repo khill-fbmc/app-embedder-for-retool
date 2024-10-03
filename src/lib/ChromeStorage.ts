@@ -32,14 +32,20 @@ export class ChromeStorage<T extends Options> {
       reject(e);
     }
     return promise.then((saved) => {
-      chrome.runtime.sendMessage({ source: "storage", event: "update", data: saved });
+      chrome.runtime.sendMessage({
+        source: "storage",
+        event: "update",
+        data: saved,
+      });
     });
   }
 
   public async load(): Promise<T> {
     const { promise, resolve, reject } = Promise.withResolvers<T>();
     try {
-      chrome.storage.sync.get(undefined, (saved: Options) => resolve(saved as T));
+      chrome.storage.sync.get(undefined, (saved: Options) =>
+        resolve(saved as T)
+      );
     } catch (e) {
       reject(e);
     }
@@ -48,7 +54,11 @@ export class ChromeStorage<T extends Options> {
 
   private _handleMessage(message: any) {
     const msg = message as StorageUpdated<T>;
-    if (msg?.source === "storage" && msg?.event === "update" && this._updateHandler) {
+    if (
+      msg?.source === "storage" &&
+      msg?.event === "update" &&
+      this._updateHandler
+    ) {
       this._updateHandler(msg.data);
     }
   }

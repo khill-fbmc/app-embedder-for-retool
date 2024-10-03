@@ -4,19 +4,22 @@ import { clsx } from "clsx";
 import React from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
-import { useComposedUrl } from "@/hooks/useComposedUrl";
+import { useActiveApp } from "@/hooks/useActiveApp";
+import { useAppUrl } from "@/hooks/useAppUrl";
 import { useExtensionState } from "@/hooks/useExtensionState";
 
 import type { RetoolApp } from "@/types";
 
 type Props = {
   app: RetoolApp;
-  isActive: boolean;
 };
 
-function AppCard({ app, isActive }: Props) {
-  const domain = useExtensionState((s) => s.domain);
+function AppCard({ app }: Props) {
+  const appUrl = useAppUrl(app);
+  const { app: activeApp } = useActiveApp();
   const setActiveApp = useExtensionState((s) => s.setActiveApp);
+
+  const isActive = app.name === activeApp?.name;
 
   return (
     <Card
@@ -50,10 +53,10 @@ function AppCard({ app, isActive }: Props) {
               <h5>Query Params</h5>
               <dl>
                 {app.query.map((p) => (
-                  <>
+                  <div key={p.param}>
                     <dt className="query">{p.param}</dt>
                     <dd className="text-muted">{p.value}</dd>
-                  </>
+                  </div>
                 ))}
               </dl>
             </Col>
@@ -63,10 +66,10 @@ function AppCard({ app, isActive }: Props) {
               <h5>Hash Params</h5>
               <dl>
                 {app.hash.map((p) => (
-                  <>
+                  <div key={p.param}>
                     <dt className="hash">{p.param}</dt>
                     <dd className="text-muted">{p.value}</dd>
-                  </>
+                  </div>
                 ))}
               </dl>
             </Col>
@@ -78,7 +81,7 @@ function AppCard({ app, isActive }: Props) {
             target="_blank"
             rel="noreferrer"
             className="btn-sm d-flex align-items-center gap-1"
-            href={useComposedUrl(domain, app)}
+            href={appUrl}
           >
             <i className="bi bi-box-arrow-up-right"></i>Open in Retool
           </a>

@@ -1,5 +1,3 @@
-import "./Options.css";
-
 import React from "react";
 import { Col, Container, Navbar, Row, Tab, Tabs } from "react-bootstrap";
 import { Toaster } from "react-hot-toast";

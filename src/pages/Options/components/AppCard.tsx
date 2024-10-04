@@ -8,13 +8,25 @@ import { useActiveApp } from "@/hooks/useActiveApp";
 import { useAppUrl } from "@/hooks/useAppUrl";
 import { useExtensionState } from "@/hooks/useExtensionState";
 
-import type { RetoolApp } from "@/types";
+import type { RetoolApp, UrlParamSpec } from "@/types/extension";
 
+// Base props
 type Props = {
   app: RetoolApp;
 };
 
-function AppCard({ app }: Props) {
+// Props for the editable state
+type EditProps = Props & {
+  editable: true;
+  onEdit: () => void;
+};
+
+// Props for the non-editable state
+type StdProps = Props & {
+  editable?: false | undefined;
+};
+
+function AppCard({ app, ...props }: EditProps | StdProps) {
   const appUrl = useAppUrl(app);
   const { app: activeApp } = useActiveApp();
   const setActiveApp = useExtensionState((s) => s.setActiveApp);
@@ -51,27 +63,13 @@ function AppCard({ app }: Props) {
           {app.query.length > 0 && (
             <Col>
               <h5>Query Params</h5>
-              <dl>
-                {app.query.map((p) => (
-                  <div key={p.param}>
-                    <dt className="query">{p.param}</dt>
-                    <dd className="text-muted">{p.value}</dd>
-                  </div>
-                ))}
-              </dl>
+              <Parameters params={app.query} />
             </Col>
           )}
           {app.hash.length > 0 && (
             <Col>
               <h5>Hash Params</h5>
-              <dl>
-                {app.hash.map((p) => (
-                  <div key={p.param}>
-                    <dt className="hash">{p.param}</dt>
-                    <dd className="text-muted">{p.value}</dd>
-                  </div>
-                ))}
-              </dl>
+              <Parameters params={app.hash} />
             </Col>
           )}
         </Row>
@@ -86,11 +84,23 @@ function AppCard({ app }: Props) {
             <i className="bi bi-box-arrow-up-right"></i>Open in Retool
           </a>
           <Button
-            variant={isActive ? "primary" : "outline-primary"}
             className="btn-sm ms-auto"
-            onClick={() => setActiveApp(app.name)}
+            onClick={() => {
+              if (props.editable) {
+                props.onEdit();
+              } else {
+                setActiveApp(app.name);
+              }
+            }}
+            variant={
+              props.editable
+                ? "outline-success"
+                : isActive
+                  ? "primary"
+                  : "outline-primary"
+            }
           >
-            {isActive ? "⭐️ Active" : "Activate"}
+            {props.editable ? "Edit" : isActive ? "⭐️ Active" : "Activate"}
           </Button>
         </div>
       </Card.Body>
@@ -99,3 +109,16 @@ function AppCard({ app }: Props) {
 }
 
 export default AppCard;
+
+const Parameters: React.FC<{ params: UrlParamSpec[] }> = ({ params }) => {
+  return (
+    <dl>
+      {params.map((p) => (
+        <div key={p.param}>
+          <dt className="query">{p.param}</dt>
+          <dd className="text-muted">{p.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+};

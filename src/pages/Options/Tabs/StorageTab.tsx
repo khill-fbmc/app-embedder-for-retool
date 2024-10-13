@@ -26,15 +26,12 @@ function StorageTab() {
         </Col>
       </Row>
       <Row>
-        {!apps.length ? (
-          <></>
-        ) : (
+        {apps.length > 0 &&
           apps.map((app) => (
             <Col key={app.name} md={12} lg={6} className="p-1">
               <AppCard app={app} />
             </Col>
-          ))
-        )}
+          ))}
       </Row>
     </Container>
   );

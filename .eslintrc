@@ -29,6 +29,7 @@
   },
   "rules": {
     "prettier/prettier": "error",
+    "prefer-template": "error",
     "react/jsx-sort-props": [
       "error",
       {

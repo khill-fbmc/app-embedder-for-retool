@@ -9,29 +9,37 @@ import type { RetoolApp } from "@/types/extension";
 type State = {
   domain: string;
   apps: RetoolApp[];
+  isEditing: boolean;
   activeAppName: RetoolApp["name"] | undefined;
   // activeApp: RetoolApp | undefined;
-  workflowUrl: string;
-  workflowApiKey: string;
+  workflow: {
+    url: string;
+    apiKey: string;
+  };
 };
 
 interface Actions {
   reset: () => void;
   setDomain: (domain: State["domain"]) => void;
-  setActiveApp: (name: State["domain"]) => void;
+  setActiveApp: (activeAppName: State["activeAppName"]) => void;
   addApp: (app: RetoolApp) => void;
   updateApp: (name: string, props: Partial<RetoolApp>) => void;
   getActiveApp: () => RetoolApp | undefined;
   updateActiveApp: (props: Partial<RetoolApp>) => void;
+  setEditMode: (state: boolean) => void;
+  updateWorkflow: (workflow: Partial<State["workflow"]>) => void;
 }
 
 export const STORAGE_KEY = "app-embedder-for-retool";
 
 const initialState: State = {
   domain: "",
+  isEditing: false,
   activeAppName: INSPECTOR_APP["name"],
-  workflowUrl: "",
-  workflowApiKey: "",
+  workflow: {
+    url: "",
+    apiKey: "",
+  },
   apps: [INSPECTOR_APP, ...DEMO_APPS],
 };
 
@@ -41,7 +49,8 @@ export const useExtensionState = create<State & Actions>()(
       ...initialState,
       reset: () => set(initialState),
       setDomain: (domain) => set(() => ({ domain })),
-      setActiveApp: (name) => set(() => ({ activeAppName: name })),
+      setEditMode: (isEditing) => set(() => ({ isEditing })),
+      setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
       addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
       updateApp: (name, props) => {
         set((state) => ({
@@ -59,6 +68,10 @@ export const useExtensionState = create<State & Actions>()(
           get().updateApp(name, props);
         }
       },
+      updateWorkflow: (props) =>
+        set((state) =>
+          Object.assign(state, { workflow: { ...state.workflow, ...props } })
+        ),
     }),
     {
       name: STORAGE_KEY,

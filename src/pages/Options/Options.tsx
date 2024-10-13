@@ -1,3 +1,5 @@
+import "./Options.css";
+
 import React from "react";
 import { Col, Container, Navbar, Row, Tab, Tabs } from "react-bootstrap";
 import { Toaster } from "react-hot-toast";
@@ -5,10 +7,10 @@ import { Toaster } from "react-hot-toast";
 import extLogo from "@/assets/img/logo_32.png";
 import retoolLogo from "@/assets/img/retool.svg";
 
-import OptionsForm from "../Tabs/ConfigTab";
-import JSONTab from "../Tabs/JSONTab";
-import StorageTab from "../Tabs/StorageTab";
-import WorkflowTab from "../Tabs/WorkflowTab";
+import OptionsForm from "./Tabs/ConfigTab";
+import JSONTab from "./Tabs/JSONTab";
+import StorageTab from "./Tabs/StorageTab";
+import WorkflowTab from "./Tabs/WorkflowTab";
 
 function Options() {
   return (
@@ -51,7 +53,6 @@ function Options() {
           <JSONTab />
         </Tab>
       </Tabs>
-
       <footer className="d-flex py-2 bg-dark text-light justify-content-center">
         <p className="my-auto">
           Made with ❤️ by{" "}

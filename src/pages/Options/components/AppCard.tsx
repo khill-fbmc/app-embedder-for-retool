@@ -4,32 +4,34 @@ import { clsx } from "clsx";
 import React from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
-import { useActiveApp } from "@/hooks/useActiveApp";
-import { useAppUrl } from "@/hooks/useAppUrl";
+import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
+import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 
-import type { RetoolApp, UrlParamSpec } from "@/types/extension";
+import type { RetoolApp, UrlParam } from "@/types/extension";
 
 // Base props
-type Props = {
+type BaseProps = {
   app: RetoolApp;
 };
 
-// Props for the editable state
-type EditProps = Props & {
+type StdProps = BaseProps & {
+  editable?: false | undefined;
+};
+
+type EditProps = BaseProps & {
   editable: true;
   onEdit: () => void;
 };
 
-// Props for the non-editable state
-type StdProps = Props & {
-  editable?: false | undefined;
-};
+type Props = EditProps | StdProps;
 
-function AppCard({ app, ...props }: EditProps | StdProps) {
-  const appUrl = useAppUrl(app);
-  const { app: activeApp } = useActiveApp();
+function AppCard({ app, ...props }: Props) {
+  const { endEditMode } = useEditMode();
+  const domain = useExtensionState((s) => s.domain);
+  const activeApp = useExtensionState((s) => s.getActiveApp());
   const setActiveApp = useExtensionState((s) => s.setActiveApp);
+  const appUrl = useRetoolAppUrl(domain, app);
 
   const isActive = app.name === activeApp?.name;
 
@@ -89,6 +91,7 @@ function AppCard({ app, ...props }: EditProps | StdProps) {
               if (props.editable) {
                 props.onEdit();
               } else {
+                endEditMode();
                 setActiveApp(app.name);
               }
             }}
@@ -110,7 +113,7 @@ function AppCard({ app, ...props }: EditProps | StdProps) {
 
 export default AppCard;
 
-const Parameters: React.FC<{ params: UrlParamSpec[] }> = ({ params }) => {
+const Parameters: React.FC<{ params: UrlParam[] }> = ({ params }) => {
   return (
     <dl>
       {params.map((p) => (

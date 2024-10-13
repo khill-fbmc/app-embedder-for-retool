@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import React, { useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { FormProvider, useForm } from "react-hook-form";
 
+import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
 
 import AppCard from "../components/AppCard";
 import DomainInput from "../components/DomainInput";
 import AppForm from "./AppForm";
 
-function OptionsForm() {
-  const getActiveApp = useExtensionState((s) => s.getActiveApp);
-  const updateApp = useExtensionState((s) => s.updateActiveApp);
-  const [editing, setEditing] = useState(false);
+import type { RetoolApp } from "@/types/extension";
 
-  const domain = useExtensionState((s) => s.domain);
-  const activeAppName = useExtensionState((s) => s.activeAppName);
-
-  const app = getActiveApp();
-
-  useEffect(() => {
-    // reset(getActiveApp());
-  }, [activeAppName]);
+function ConfigTab() {
+  const methods = useForm<RetoolApp>();
+  const { isEditing, startEditMode } = useEditMode();
+  const app = useExtensionState((s) => s.getActiveApp());
 
   return (
     <>
@@ -29,30 +24,14 @@ function OptionsForm() {
           <DomainInput />
 
           <h3 className="mt-2">Current App</h3>
-          {!editing ? (
+          {!isEditing ? (
             <Container className="pt-2">
-              <AppCard editable app={app!} onEdit={() => setEditing(true)} />
+              <AppCard editable app={app!} onEdit={() => startEditMode()} />
             </Container>
           ) : (
-            <>
+            <FormProvider {...methods}>
               <AppForm app={app!} />
-              <div className="d-flex gap-5">
-                <Button
-                  className="px-3"
-                  variant="outline-danger"
-                  onClick={() => setEditing(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-fill px-5"
-                  type="submit"
-                  variant="success"
-                >
-                  Save
-                </Button>
-              </div>
-            </>
+            </FormProvider>
           )}
         </Col>
       </Row>
@@ -60,4 +39,4 @@ function OptionsForm() {
   );
 }
 
-export default OptionsForm;
+export default ConfigTab;

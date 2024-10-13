@@ -4,8 +4,7 @@ export type AppVersion = SemVer | "latest";
 
 export type AppEnvironment = "production" | "staging" | "development";
 
-export type UrlParamSpec = {
-  index: number;
+export type UrlParam = {
   param: string;
   value: string;
 };
@@ -15,6 +14,6 @@ export type RetoolApp = {
   public: boolean;
   env: AppEnvironment;
   version: AppVersion;
-  hash: UrlParamSpec[];
-  query: UrlParamSpec[];
+  hash: UrlParam[];
+  query: UrlParam[];
 };

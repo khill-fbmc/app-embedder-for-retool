@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 
 import { useActiveApp } from "@/hooks/useActiveApp";
 
-import type { AppEnvironment } from "@/types";
+import type { AppEnvironment } from "@/types/extension";
 
 type Props = {
   environment: AppEnvironment;

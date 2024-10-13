@@ -1,91 +1,152 @@
-import React, { useMemo, useState } from "react";
-import Accordion from "react-bootstrap/Accordion";
+import JsonView from "@uiw/react-json-view";
+import React, { useState } from "react";
+import { Alert, Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 
 import { useExtensionState } from "@/hooks/useExtensionState";
-import { useWorkflow } from "@/hooks/useWorkflow";
+import { useWorkflow } from "@/hooks/useWorkflow2";
 
 function WorkflowTab() {
-  const workflowUrl = useExtensionState((s) => s.workflowUrl);
-  const workflowApiKey = useExtensionState((s) => s.workflowApiKey);
+  const updateWorkflow = useExtensionState((s) => s.updateWorkflow);
+  const { apiKey, url } = useExtensionState((s) => s.workflow);
 
-  const {
-    data: appList,
-    error: appListError,
-    isLoading,
-    setWorkflowUrl,
-    setWorkflowApiKey,
-  } = useWorkflow(workflowUrl, workflowApiKey);
+  const [useWorkflowProvider, setUseWorkflowProvider] = useState(false);
 
-  const [useWorkflowList, setUseWorkflowList] = useState(false);
-
+  // const { data, error, isLoading } = useWorkflow(apiKey, url);
+  const data = { apps: [] };
   return (
     <Container>
-      <Accordion defaultActiveKey="0" className="shadow mt-2 mx-5">
-        <Accordion.Item eventKey="0">
-          <Accordion.Header>
-            <div className="d-flex gap-2">
-              <i className="bi bi-cloud"></i>
-              Workflow App Name Provider
-            </div>
-          </Accordion.Header>
-          <Accordion.Body>
-            <Form.Group className="mb-4" controlId="workflowUrl">
-              <p className="text-muted">
-                Enable this feature to swap the <code>App Name</code> from an
-                input field, into a dynamic list fetched from a Retool Workflow.
-              </p>
-              <Form.Label>Workflow URL</Form.Label>
-              <Form.Control
-                value={workflowUrl}
-                disabled={!useWorkflowList}
-                onChange={(e) => setWorkflowUrl(e.target.value)}
-              />
-              <Form.Text className="text-muted">
-                Supply a Retool workflow URL that returns a <code>200</code>{" "}
-                with a JSON body formatted <code>{"{ apps: string[] }"}</code>
-              </Form.Text>
-            </Form.Group>
-            <Form.Group className="mb-4" controlId="workflowApiKey">
-              <Form.Label>Workflow API Key</Form.Label>
-              <Form.Control
-                type="password"
-                value={workflowApiKey}
-                disabled={!useWorkflowList}
-                onChange={(e) => setWorkflowApiKey(e.target.value)}
-              />
-              <Form.Text className="text-muted">
-                Copy this value from Retool
-              </Form.Text>
-            </Form.Group>
+      <div className="my-2 d-flex">
+        <h2 className="mx-auto">Workflow Apps List</h2>
+      </div>
 
-            <Container className="d-flex justify-content-end">
-              <Button
-                variant={useWorkflowList ? "warning" : "primary"}
-                title={`Enable using a workflow to provide the app name list`}
-                onClick={() => setUseWorkflowList((old) => !old)}
-              >
-                {useWorkflowList ? "Disable Provider" : "Enable Provider"}
-              </Button>
-            </Container>
-            {!useWorkflowList ? (
-              <p className="text-muted">❌ Disabled</p>
-            ) : isLoading ? (
-              <p className="text-muted">🚀 Fetching...</p>
-            ) : appListError ? (
-              <p className="text-danger">💣 Error! {appListError}</p>
-            ) : appList ? (
-              <p className="text-muted">
-                ✅ Success. Loaded {appList.length} app names.
-              </p>
-            ) : (
-              <p className="text-muted">🔦 No results returned.</p>
-            )}
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
+      <Row>
+        <Col className="offset-1 col-10">
+          <Alert variant="warning">
+            <Alert.Heading>How To Use</Alert.Heading>
+            Here are all your saved Retool App Definitions
+          </Alert>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <Card className="shadow">
+            <Card.Header>
+              <div className="d-flex gap-2">
+                <i className="bi bi-cloud"></i>
+                Workflow Details
+              </div>
+            </Card.Header>
+            <Card.Body>
+              <Form.Group className="mb-4" controlId="workflowUrl">
+                <p className="text-muted">
+                  Enable this feature to swap the <code>App Name</code> from an
+                  input field, into a dynamic list fetched from a Retool
+                  Workflow.
+                </p>
+                <Form.Label>Workflow URL</Form.Label>
+                <Form.Control
+                  value={url}
+                  disabled={!useWorkflowProvider}
+                  onChange={(e) => updateWorkflow({ url: e.target.value })}
+                />
+                <Form.Text className="text-muted">
+                  Supply a Retool workflow URL that returns a <code>200</code>{" "}
+                  with a JSON body formatted <code>{"{ apps: string[] }"}</code>
+                </Form.Text>
+              </Form.Group>
+              <Form.Group className="mb-4" controlId="workflowApiKey">
+                <Form.Label>Workflow API Key</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={apiKey}
+                  disabled={!useWorkflowProvider}
+                  onChange={(e) => updateWorkflow({ apiKey: e.target.value })}
+                />
+                <Form.Text className="text-muted">
+                  Copy this value from Retool
+                </Form.Text>
+              </Form.Group>
+
+              <Container className="d-flex justify-content-end">
+                <Button
+                  variant={useWorkflowProvider ? "warning" : "primary"}
+                  title={`Enable using a workflow to provide the app name list`}
+                  onClick={() => setUseWorkflowProvider((old) => !old)}
+                >
+                  {useWorkflowProvider ? "Disable Provider" : "Enable Provider"}
+                </Button>
+              </Container>
+            </Card.Body>
+            <Card.Footer>
+              <div className="d-flex justify-content-between">
+                <small className="text-muted">Last updated 3 mins ago</small>
+                <div>
+                  {!useWorkflowProvider ? (
+                    <small className="text-muted">❌ Disabled</small>
+                  ) : isLoading ? (
+                    <small className="text-muted">🚀 Fetching...</small>
+                  ) : error ? (
+                    <small className="text-danger">💣 Error! {error}</small>
+                  ) : data ? (
+                    <small className="text-muted">
+                      ✅ <span className="text-success">Success.</span> Loaded{" "}
+                      {data.apps.length} app names.
+                    </small>
+                  ) : (
+                    <small className="text-muted">
+                      🔦 No results returned.
+                    </small>
+                  )}
+                </div>
+              </div>
+            </Card.Footer>
+          </Card>
+        </Col>
+
+        <Col>2</Col>
+
+        <Col>
+          <Card className="shadow">
+            <Card.Header>
+              <div className="d-flex gap-2">
+                <i className="bi bi-cloud"></i>
+                Workflow Details
+              </div>
+            </Card.Header>
+            <Card.Body>
+              <JsonView value={data} />
+            </Card.Body>
+            <Card.Footer>
+              <div className="d-flex justify-content-between">
+                <small className="text-muted">Last updated 3 mins ago</small>
+                <div>
+                  {!useWorkflowProvider ? (
+                    <small className="text-muted">❌ Disabled</small>
+                  ) : isLoading ? (
+                    <small className="text-muted">🚀 Fetching...</small>
+                  ) : error ? (
+                    <small className="text-danger">💣 Error! {error}</small>
+                  ) : data ? (
+                    <small className="text-muted">
+                      ✅ <span className="text-success">Success.</span> Loaded{" "}
+                      {data.apps.length} app names.
+                    </small>
+                  ) : (
+                    <small className="text-muted">
+                      🔦 No results returned.
+                    </small>
+                  )}
+                </div>
+              </div>
+            </Card.Footer>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 }

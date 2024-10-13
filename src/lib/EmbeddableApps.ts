@@ -1,12 +1,12 @@
-import type { RetoolApp } from "@/types";
+import type { RetoolApp } from "@/types/extension";
 
 export const INSPECTOR_APP: RetoolApp = {
   name: "app-embedder-for-retool-inspector",
   public: true,
   version: "latest",
   env: "production",
-  hash: [{ index: 1, param: "example", value: "current" }],
-  query: [{ index: 1, param: "user", value: "kevin.hill" }],
+  hash: [{ param: "example", value: "current" }],
+  query: [{ param: "user", value: "kevin.hill" }],
 };
 
 export const DEMO_APPS: RetoolApp[] = [
@@ -24,8 +24,8 @@ export const DEMO_APPS: RetoolApp[] = [
     version: "latest",
     env: "production",
     hash: [
-      { index: 1, param: "taco", value: "bell" },
-      { index: 2, param: "bean", value: "burrito" },
+      { param: "taco", value: "bell" },
+      { param: "bean", value: "burrito" },
     ],
     query: [],
   },
@@ -34,7 +34,7 @@ export const DEMO_APPS: RetoolApp[] = [
     public: false,
     version: "1.2.3",
     env: "staging",
-    hash: [{ index: 1, param: "super", value: "duper" }],
-    query: [{ index: 1, param: "foo", value: "bar" }],
+    hash: [{ param: "super", value: "duper" }],
+    query: [{ param: "foo", value: "bar" }],
   },
 ];

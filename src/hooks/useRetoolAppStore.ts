@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { RetoolApp, UrlParamSpec } from "../types/extension";
+import type { RetoolApp, UrlParam } from "../types/extension";
 
 export interface RetoolAppState extends RetoolApp {
   setName: (name: string) => void;
@@ -11,7 +11,7 @@ export interface RetoolAppState extends RetoolApp {
   updateParam: (
     which: "query" | "hash",
     index: number,
-    spec: UrlParamSpec[]
+    spec: UrlParam[]
   ) => void;
   resetApp: () => void;
 }

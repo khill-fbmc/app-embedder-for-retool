@@ -1,43 +1,95 @@
 import clsx from "clsx";
-import React, { useEffect, useState } from "react";
-import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
-import { Controller, useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import {
+  Button,
+  Col,
+  Form,
+  InputGroup,
+  Row,
+  ToggleButton,
+} from "react-bootstrap";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 
-import { debug } from "@/lib/logger";
+import { useEditMode } from "@/hooks/useEditMode";
+import { useExtensionState } from "@/hooks/useExtensionState";
 import { errorToast, successToast } from "@/lib/toast";
 
-import ActiveAppUrl from "../components/ActiveAppUrl";
+import AddButton from "../components/AddButton";
+import RetoolAppUrl from "../components/RetoolAppUrl";
+import RetoolAppUrl2 from "../components/RetoolAppUrl2";
+import TrashButton from "../components/TrashButton";
 
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
-import type { RetoolApp, UrlParamSpec } from "@/types/extension";
+import type { RetoolApp } from "@/types/extension";
 
-function AppForm({ app }: { app: RetoolApp }) {
-  const { control, formState, handleSubmit } = useForm<RetoolApp>({
-    mode: "all",
+type Props = {
+  app: RetoolApp;
+};
+
+const INIT_PARAM = { param: "", value: "" };
+
+function AppForm({ app }: Props) {
+  const { setEditMode } = useEditMode();
+  const domain = useExtensionState((s) => s.domain);
+  const updateApp = useExtensionState((s) => s.updateActiveApp);
+
+  const {
+    control,
+    formState: { errors, isValid },
+    watch,
+    reset,
+    getValues,
+    handleSubmit,
+  } = useForm<RetoolApp>({
+    mode: "onBlur",
     defaultValues: { ...app },
   });
 
+  // console.log(watch());
+
+  const hashFields = useFieldArray({ name: "hash", control });
+  const queryFields = useFieldArray({ name: "query", control });
+
   const onSubmit: SubmitHandler<RetoolApp> = async (data) => {
-    if (!formState.isValid) {
-      console.log(formState);
-      errorToast(JSON.stringify(formState.errors));
+    if (!isValid) {
+      errorToast(JSON.stringify(errors));
     } else {
-      debug("SUBMIT", data);
+      const editedApp = getValues();
+      updateApp(editedApp);
       successToast("Edits saved.");
     }
   };
 
   const onError: SubmitErrorHandler<RetoolApp> = (errors, e) => {
-    console.log(errors, e);
+    const message = JSON.stringify(errors, null, 2);
+    errorToast(message);
   };
 
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
       <Form.Group className="mb-4" controlId="app">
-        <Form.Label>
-          App Name{"  "}
-          <span className="d-inline ml-2 text-danger">(required)</span>
-        </Form.Label>
+        <div className="d-flex justify-content-between">
+          <Form.Label>
+            App Name
+            <span className="text-danger">{"   "}(required)</span>
+          </Form.Label>
+          <Controller
+            name="public"
+            control={control}
+            defaultValue={app?.public}
+            render={({ field }) => (
+              <div className="d-flex gap-2">
+                <Form.Label>Public</Form.Label>
+                <Form.Check
+                  name={field.name}
+                  checked={field.value}
+                  onChange={field.onChange}
+                />
+              </div>
+            )}
+          />
+        </div>
+
         <Controller
           name="name"
           control={control}
@@ -49,6 +101,7 @@ function AppForm({ app }: { app: RetoolApp }) {
           URL after "app/"
         </Form.Text>
       </Form.Group>
+
       <Row>
         <Col sm={6} xs={12}>
           <Form.Group className="mb-4" controlId="version">
@@ -57,10 +110,10 @@ function AppForm({ app }: { app: RetoolApp }) {
               name="version"
               control={control}
               defaultValue={app?.version}
-              render={({ field, fieldState }) => (
+              render={({ field }) => (
                 <>
                   <Form.Control {...field} />
-                  {fieldState.invalid && <p>Not Valid</p>}
+                  {errors?.version && <p>Not Valid</p>}
                 </>
               )}
               rules={{
@@ -109,97 +162,102 @@ function AppForm({ app }: { app: RetoolApp }) {
       <Row>
         <Col>
           <Form.Group
-            className="d-flex flex-column mb-4 gap-1"
             controlId="query"
+            className="d-flex flex-column mb-4 gap-1"
           >
             <Form.Label>Extra URL Params</Form.Label>
-            {app?.query && <ParamMiniForm params={app.query} />}
+            {queryFields.fields.map((field, index) => (
+              <InputGroup key={field.id}>
+                <Controller
+                  name={`query.${index}.param` as const}
+                  defaultValue={field.param}
+                  control={control}
+                  render={({ field }) => (
+                    <Form.Control placeholder="param" {...field} />
+                  )}
+                />
+                <Controller
+                  name={`query.${index}.value` as const}
+                  defaultValue={field.value}
+                  control={control}
+                  render={({ field }) => (
+                    <Form.Control placeholder="value" {...field} />
+                  )}
+                />
+                <TrashButton
+                  onClick={() => {
+                    console.log("Removing Query IDX", index);
+                    queryFields.remove(index);
+                  }}
+                />
+              </InputGroup>
+            ))}
+            <AddButton onClick={() => queryFields.append(INIT_PARAM)} />
           </Form.Group>
         </Col>
 
         <Col>
           <Form.Group
-            className="d-flex flex-column mb-4 gap-1"
             controlId="hash"
+            className="d-flex flex-column mb-4 gap-1"
           >
             <Form.Label>Hash Params</Form.Label>
-            {app?.hash && <ParamMiniForm params={app.hash} />}
+            {hashFields.fields.map((field, index) => (
+              <InputGroup key={field.id}>
+                <Controller
+                  name={`hash.${index}.param` as const}
+                  defaultValue={field.param}
+                  control={control}
+                  render={({ field }) => (
+                    <Form.Control placeholder="param" {...field} />
+                  )}
+                />
+                <Controller
+                  name={`hash.${index}.value` as const}
+                  defaultValue={field.value}
+                  control={control}
+                  render={({ field }) => (
+                    <Form.Control placeholder="value" {...field} />
+                  )}
+                />
+                <TrashButton
+                  onClick={() => {
+                    console.log("Removing Hash IDX", index);
+                    hashFields.remove(index);
+                  }}
+                />
+              </InputGroup>
+            ))}
+            <AddButton onClick={() => hashFields.append(INIT_PARAM)} />
           </Form.Group>
         </Col>
       </Row>
 
-      <ActiveAppUrl />
+      <Row>
+        <RetoolAppUrl domain={domain} app={watch()} />
+      </Row>
+
+      <Row>
+        <RetoolAppUrl2 domain={domain} app={watch()} />
+      </Row>
+
+      <div className="d-flex gap-5">
+        <Button
+          className="px-3"
+          variant="outline-danger"
+          onClick={() => {
+            reset();
+            setEditMode(false);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button className="flex-fill px-5" type="submit" variant="success">
+          Save
+        </Button>
+      </div>
     </Form>
   );
 }
 
 export default AppForm;
-
-const ParamMiniForm: React.FC<{ params: UrlParamSpec[] }> = ({ params }) => {
-  return (
-    <>
-      {params.map((spec) => {
-        const key = `URL_${spec.index}`;
-        return (
-          <ParamInputGroup
-            key={key}
-            spec={spec}
-            onChange={(spec) => {
-              debug(`[QUERY|SET]`, {
-                key,
-                spec,
-              });
-            }}
-            onRemove={(indexToRemove) => {
-              debug("[QUERY|DEL]", { key, indexToRemove });
-            }}
-          />
-        );
-      })}
-      <Button
-        className="btn-sm mx-5"
-        variant="primary"
-        onClick={(e) => {
-          debug("[QUERY|ADD]");
-        }}
-      >
-        Add +
-      </Button>
-    </>
-  );
-};
-
-const ParamInputGroup: React.FC<{
-  spec: UrlParamSpec;
-  onRemove: (index: number) => void;
-  onChange: (data: UrlParamSpec) => void;
-}> = ({ spec, onChange, onRemove }) => {
-  const [_key, set_key] = useState(spec.param);
-  const [_value, set_value] = useState(spec.value);
-
-  useEffect(() => {
-    onChange({
-      index: spec.index,
-      param: _key,
-      value: _value,
-    });
-  }, [_key, _value, spec, onChange]);
-
-  return (
-    <InputGroup>
-      <Form.Control
-        placeholder="key"
-        value={_key}
-        onChange={(e) => set_key(e.target.value)}
-      />
-      <Form.Control
-        placeholder="value"
-        value={_value}
-        onChange={(e) => set_value(e.target.value)}
-      />
-      <Button onClick={() => onRemove(spec.index)} variant="danger">
-        <i className="bi bi-trash"></i>
-      </Button>
-    </InputGroup>
-  );
-};

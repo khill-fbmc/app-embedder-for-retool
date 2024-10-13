@@ -1,10 +1,12 @@
 import React from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 
-import { useActiveAppUrl } from "@/hooks/useActiveAppUrl";
+import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 
-function ActiveAppUrl() {
-  const url = useActiveAppUrl();
+import type { RetoolApp } from "@/types/extension";
+
+function RetoolAppUrl({ app, domain }: { app: RetoolApp; domain: string }) {
+  const url = useRetoolAppUrl(domain, app);
 
   return (
     <Form.Group className="mb-4" controlId="url">
@@ -24,4 +26,4 @@ function ActiveAppUrl() {
   );
 }
 
-export default ActiveAppUrl;
+export default RetoolAppUrl;

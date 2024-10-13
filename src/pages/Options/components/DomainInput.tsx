@@ -9,8 +9,8 @@ export default function DomainInputGroup() {
   return (
     <Form.Group className="mb-4" controlId="domain">
       <Form.Label>
-        Instance Name{"  "}
-        <span className="d-inline ml-2 text-danger">(required)</span>
+        Instance Name
+        <span className="text-danger">{"  "}(required)</span>
       </Form.Label>
 
       <InputGroup>

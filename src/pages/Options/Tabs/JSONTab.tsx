@@ -4,10 +4,10 @@ import React from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
-import { useExtensionStatePrimitives } from "@/hooks/useExtensionStatePrimitives";
+import { useExtensionState } from "@/hooks/useExtensionState";
 
 function JSONTab() {
-  const state = useExtensionStatePrimitives();
+  const state = useExtensionState();
 
   return (
     <Container className="pb-5">

@@ -1,8 +1,8 @@
 import { useActiveApp } from "./useActiveApp";
-import { useExtensionState } from "./useExtensionState";
+import { useDomain } from "./useDomain";
 
 export function useActiveAppUrl() {
-  const domain = useExtensionState((s) => s.domain);
+  const { domain } = useDomain();
   const { app } = useActiveApp();
 
   if (app) {

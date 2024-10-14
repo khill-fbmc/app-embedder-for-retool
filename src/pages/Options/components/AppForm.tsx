@@ -1,23 +1,17 @@
 import clsx from "clsx";
-import React, { useEffect } from "react";
-import {
-  Button,
-  Col,
-  Form,
-  InputGroup,
-  Row,
-  ToggleButton,
-} from "react-bootstrap";
+import React from "react";
+import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
+import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { errorToast, successToast } from "@/lib/toast";
 
-import AddButton from "../components/AddButton";
-import RetoolAppUrl from "../components/RetoolAppUrl";
-import RetoolAppUrl2 from "../components/RetoolAppUrl2";
-import TrashButton from "../components/TrashButton";
+import AddButton from "./AddButton";
+import RetoolAppUrl from "./RetoolAppUrl";
+import RetoolAppUrl2 from "./RetoolAppUrl2";
+import TrashButton from "./TrashButton";
 
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import type { RetoolApp } from "@/types/extension";
@@ -30,7 +24,7 @@ const INIT_PARAM = { param: "", value: "" };
 
 function AppForm({ app }: Props) {
   const { setEditMode } = useEditMode();
-  const domain = useExtensionState((s) => s.domain);
+  const { domain } = useDomain();
   const updateApp = useExtensionState((s) => s.updateActiveApp);
 
   const {

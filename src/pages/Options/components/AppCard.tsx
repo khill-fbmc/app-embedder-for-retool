@@ -4,6 +4,7 @@ import { clsx } from "clsx";
 import React from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
+import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
@@ -28,7 +29,7 @@ type Props = EditProps | StdProps;
 
 function AppCard({ app, ...props }: Props) {
   const { endEditMode } = useEditMode();
-  const domain = useExtensionState((s) => s.domain);
+  const { domain } = useDomain();
   const activeApp = useExtensionState((s) => s.getActiveApp());
   const setActiveApp = useExtensionState((s) => s.setActiveApp);
   const appUrl = useRetoolAppUrl(domain, app);

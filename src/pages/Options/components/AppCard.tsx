@@ -1,9 +1,10 @@
 import "./AppCard.css";
 
 import { clsx } from "clsx";
-import React from "react";
+import React, { useMemo } from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
+import { useActiveApp } from "@/hooks/useActiveApp";
 import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
@@ -30,11 +31,14 @@ type Props = EditProps | StdProps;
 function AppCard({ app, ...props }: Props) {
   const { endEditMode } = useEditMode();
   const { domain } = useDomain();
-  const activeApp = useExtensionState((s) => s.getActiveApp());
-  const setActiveApp = useExtensionState((s) => s.setActiveApp);
+  const { app: activeApp, setActiveApp } = useActiveApp();
+
   const appUrl = useRetoolAppUrl(domain, app);
 
-  const isActive = app.name === activeApp?.name;
+  const isActive = useMemo(
+    () => app.name === activeApp?.name,
+    [app, activeApp]
+  );
 
   return (
     <Card

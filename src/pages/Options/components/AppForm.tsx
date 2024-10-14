@@ -23,16 +23,15 @@ type Props = {
 const INIT_PARAM = { param: "", value: "" };
 
 function AppForm({ app }: Props) {
-  const { setEditMode } = useEditMode();
   const { domain } = useDomain();
-  const updateApp = useExtensionState((s) => s.updateActiveApp);
+  const { setEditMode } = useEditMode();
+  const updateActiveApp = useExtensionState((s) => s.updateActiveApp);
 
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
-    reset,
-    getValues,
+    reset: resetForm,
     handleSubmit,
   } = useForm<RetoolApp>({
     mode: "onBlur",
@@ -45,13 +44,8 @@ function AppForm({ app }: Props) {
   const queryFields = useFieldArray({ name: "query", control });
 
   const onSubmit: SubmitHandler<RetoolApp> = async (data) => {
-    if (!isValid) {
-      errorToast(JSON.stringify(errors));
-    } else {
-      const editedApp = getValues();
-      updateApp(editedApp);
-      successToast("Edits saved.");
-    }
+    updateActiveApp(data);
+    successToast("Edits saved.");
   };
 
   const onError: SubmitErrorHandler<RetoolApp> = (errors, e) => {
@@ -240,7 +234,7 @@ function AppForm({ app }: Props) {
           className="px-3"
           variant="outline-danger"
           onClick={() => {
-            reset();
+            resetForm();
             setEditMode(false);
           }}
         >

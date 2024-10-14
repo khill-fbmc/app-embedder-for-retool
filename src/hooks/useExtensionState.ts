@@ -42,37 +42,37 @@ const initialState: State = {
 };
 
 export const useExtensionState = create<State & Actions>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-      setDomain: (domain) => set(() => ({ domain })),
-      setEditMode: (isEditing) => set(() => ({ isEditing })),
-      setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
-      addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
-      updateApp: (name, props) => {
-        set((state) => ({
-          apps: state.apps.map((app) => {
-            return app.name === name ? { ...app, ...props } : app;
-          }),
-        }));
-      },
-      updateActiveApp: (props) => {
-        const name = get().activeAppName;
-        if (name) {
-          get().updateApp(name, props);
-        }
-      },
-      updateWorkflow: (props) =>
-        set((state) => ({
-          ...state,
-          workflow: { ...state.workflow, ...props },
-        })),
-    }),
-    {
-      name: STORAGE_KEY,
-      storage: createJSONStorage(() => ChromeStateStorage),
-    }
-  )
+  // persist(
+  (set, get) => ({
+    ...initialState,
+    setDomain: (domain) => set(() => ({ domain })),
+    setEditMode: (isEditing) => set(() => ({ isEditing })),
+    setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
+    addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
+    updateApp: (name, props) => {
+      set((state) => ({
+        apps: state.apps.map((app) => {
+          return app.name === name ? { ...app, ...props } : app;
+        }),
+      }));
+    },
+    updateActiveApp: (props) => {
+      const name = get().activeAppName;
+      if (name) {
+        get().updateApp(name, props);
+      }
+    },
+    updateWorkflow: (props) =>
+      set((state) => ({
+        ...state,
+        workflow: { ...state.workflow, ...props },
+      })),
+  })
+  //   {
+  //     name: STORAGE_KEY,
+  //     storage: createJSONStorage(() => ChromeStateStorage),
+  //   }
+  // )
 );
 
 export const getActiveApp = () => {

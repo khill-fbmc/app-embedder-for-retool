@@ -1,11 +1,13 @@
 import type { RetoolApp } from "@/types/extension";
 
-function useRetoolAppUrl(domain: string, app: RetoolApp): string;
-function useRetoolAppUrl(domain: string): (app: RetoolApp) => string;
-function useRetoolAppUrl(domain: string, app?: RetoolApp) {
-  return app
-    ? composeAppUrl(domain, app)
-    : (app: RetoolApp) => composeAppUrl(domain, app);
+function useRetoolUrl(domain: string): (app: RetoolApp) => string;
+function useRetoolUrl(domain: string, app?: RetoolApp): string;
+function useRetoolUrl(domain: string, app?: RetoolApp) {
+  if (!app) {
+    return (app: RetoolApp) => composeAppUrl(domain, app);
+  } else {
+    return composeAppUrl(domain, app);
+  }
 }
 
 function composeAppUrl(domain: string, app: RetoolApp) {
@@ -26,4 +28,4 @@ function composeAppUrl(domain: string, app: RetoolApp) {
   return `${url.toString()}#${hashParams.toString()}`;
 }
 
-export { useRetoolAppUrl };
+export { useRetoolUrl };

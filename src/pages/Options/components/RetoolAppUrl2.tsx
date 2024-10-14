@@ -3,12 +3,12 @@ import { githubLightTheme } from "@uiw/react-json-view/githubLight";
 import React, { useMemo } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 
-import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
+import { useRetoolUrl } from "@/hooks/useRetoolUrl";
 
 import type { RetoolApp } from "@/types/extension";
 
 function RetoolAppUrl2({ app, domain }: { app: RetoolApp; domain: string }) {
-  const url = useRetoolAppUrl(domain, app);
+  const url = useRetoolUrl(domain, app);
   const jsonUrl = useMemo(() => new URL(url), [url]);
 
   return (

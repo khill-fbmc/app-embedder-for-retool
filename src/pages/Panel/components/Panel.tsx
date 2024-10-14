@@ -3,27 +3,30 @@ import "./Panel.css";
 import React from "react";
 
 import { useActiveApp } from "@/hooks/useActiveApp";
-import { useActiveAppUrl } from "@/hooks/useActiveAppUrl";
 import { useDomain } from "@/hooks/useDomain";
+import { useRetoolUrl } from "@/hooks/useRetoolUrl";
 
 import UnsetSettingError from "./UnsetSettingError";
 
 function Panel() {
   const { domain } = useDomain();
-  const { app } = useActiveApp();
+  const app = useActiveApp();
+  const appUrl = useRetoolUrl(domain);
 
-  const url = useActiveAppUrl();
+  if (!domain || domain === "") {
+    return <UnsetSettingError unsetSetting="Instance Name" />;
+  }
 
-  return domain === "" ? (
-    <UnsetSettingError unsetSetting="Instance Name" />
-  ) : app?.name === "" ? (
-    <UnsetSettingError unsetSetting="App Name" />
-  ) : (
+  if (!app || app?.name === "") {
+    return <UnsetSettingError unsetSetting="App Name" />;
+  }
+
+  return (
     <iframe
       id="retool-frame"
       className="full-height"
       title={"Retool Embedder"}
-      src={url}
+      src={appUrl(app)}
       width="100%"
       height="100%"
     />

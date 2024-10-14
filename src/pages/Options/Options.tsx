@@ -40,14 +40,14 @@ function Options() {
                 </Alert> */}
               </Col>
             </Row>
-            <OptionsForm />
+            {/* <OptionsForm /> */}
           </Container>
         </Tab>
         <Tab eventKey="storage" title="Storage">
-          <StorageTab />
+          {/* <StorageTab /> */}
         </Tab>
         <Tab eventKey="workflow" title="Workflow">
-          {/* <WorkflowTab /> */}
+          <WorkflowTab />
         </Tab>
         <Tab eventKey="json" title="JSON">
           <JSONTab />

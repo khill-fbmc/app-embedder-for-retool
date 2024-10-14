@@ -7,6 +7,7 @@ import AppCard from "../components/AppCard";
 
 function StorageTab() {
   const apps = useExtensionState((s) => s.apps);
+  const activeAppName = useExtensionState((s) => s.activeAppName);
 
   return (
     <Container className="px-5 pb-5 mt-4">
@@ -28,7 +29,7 @@ function StorageTab() {
         {apps.length > 0 &&
           apps.map((app) => (
             <Col key={app.name} md={12} lg={6} className="p-1">
-              <AppCard app={app} />
+              <AppCard isActive={app.name === activeAppName} app={app} />
             </Col>
           ))}
       </Row>

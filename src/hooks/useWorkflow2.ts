@@ -1,14 +1,14 @@
 import useSWR from "swr";
 
 import type { RetoolApp } from "@/types/extension";
+import { WorkflowDataFetcher } from "@/lib/WorkflowDataFetcher";
 
 export function useWorkflow(
   apiKey: string,
   url: string | undefined | null | false
 ) {
-  const key = () => url;
-
-  const fetcher = async (url: string) => {
+  const fetch = async () => {
+    const data = await WorkflowDataFetcher(url) {
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -25,8 +25,8 @@ export function useWorkflow(
       );
     }
 
-    return { apps: data.apps };
-  };
+    return data;
+  }
 
-  return useSWR<{ apps: RetoolApp[] }>(key, fetcher);
+  return useSWR<{ apps: RetoolApp[] }>(url, WorkflowDataFetcher);
 }

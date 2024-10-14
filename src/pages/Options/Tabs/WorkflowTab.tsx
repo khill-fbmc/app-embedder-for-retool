@@ -1,21 +1,42 @@
 import JsonView from "@uiw/react-json-view";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import useSWR from "swr";
 
 import { useExtensionState } from "@/hooks/useExtensionState";
-import { useWorkflow } from "@/hooks/useWorkflow2";
+import { WorkflowDataFetcher } from "@/lib/WorkflowDataFetcher";
+
+import type { RetoolApp } from "@/types/extension";
 
 function WorkflowTab() {
-  const workflow = useExtensionState((s) => s.workflow);
+  const { apiKey, url } = useExtensionState((s) => s.workflow);
   const updateWorkflow = useExtensionState((s) => s.updateWorkflow);
 
   const [useWorkflowProvider, setUseWorkflowProvider] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [workflowData, setWorkflowData] = useState<RetoolApp[]>([]);
+  const [workflowError, setWorkflowError] = useState<string | undefined>();
 
-  const { data, error, isLoading } = useWorkflow(workflow.apiKey, workflow.url);
+  useEffect(() => {
+    const fetch = async () => {
+      setIsLoading(true);
+      try {
+        const reply = await WorkflowDataFetcher(apiKey, url);
+        if (reply.apps) {
+          setWorkflowData(reply.apps);
+        }
+        console.log(reply);
+      } catch (e) {
+        setWorkflowError((e as Error).message);
+      }
+      setIsLoading(false);
+    };
+    if (url && apiKey) fetch();
+  }, [apiKey, url]);
 
   return (
     <Container>
@@ -50,7 +71,7 @@ function WorkflowTab() {
                 </p>
                 <Form.Label>Workflow URL</Form.Label>
                 <Form.Control
-                  value={workflow?.url}
+                  value={url}
                   disabled={!useWorkflowProvider}
                   onChange={(e) => updateWorkflow({ url: e.target.value })}
                 />
@@ -63,7 +84,7 @@ function WorkflowTab() {
                 <Form.Label>Workflow API Key</Form.Label>
                 <Form.Control
                   type="password"
-                  value={workflow?.apiKey}
+                  value={apiKey}
                   disabled={!useWorkflowProvider}
                   onChange={(e) => updateWorkflow({ apiKey: e.target.value })}
                 />
@@ -90,12 +111,14 @@ function WorkflowTab() {
                     <small className="text-muted">❌ Disabled</small>
                   ) : isLoading ? (
                     <small className="text-muted">🚀 Fetching...</small>
-                  ) : error ? (
-                    <small className="text-danger">💣 Error! {error}</small>
-                  ) : data ? (
+                  ) : workflowError ? (
+                    <small className="text-danger">
+                      💣 Error! {workflowError}
+                    </small>
+                  ) : workflowData.length > 0 ? (
                     <small className="text-muted">
                       ✅ <span className="text-success">Success.</span> Loaded{" "}
-                      {data.apps.length} app names.
+                      {workflowData.length} app names.
                     </small>
                   ) : (
                     <small className="text-muted">
@@ -107,34 +130,38 @@ function WorkflowTab() {
             </Card.Footer>
           </Card>
         </Col>
-
-        <Col>2</Col>
 
         <Col>
           <Card className="shadow">
             <Card.Header>
               <div className="d-flex gap-2">
                 <i className="bi bi-cloud"></i>
-                Workflow Details
+                Workflow Data
               </div>
             </Card.Header>
             <Card.Body>
-              <JsonView value={data} />
+              {workflowData.length === 0 ? (
+                <JsonView value={workflowData} />
+              ) : (
+                <Alert>No Apps Returned From Workflow</Alert>
+              )}
             </Card.Body>
             <Card.Footer>
               <div className="d-flex justify-content-between">
-                <small className="text-muted">Last updated 3 mins ago</small>
+                <small className="text-muted">Last update: 3 mins ago</small>
                 <div>
                   {!useWorkflowProvider ? (
                     <small className="text-muted">❌ Disabled</small>
                   ) : isLoading ? (
                     <small className="text-muted">🚀 Fetching...</small>
-                  ) : error ? (
-                    <small className="text-danger">💣 Error! {error}</small>
-                  ) : data ? (
+                  ) : workflowError ? (
+                    <small className="text-danger">
+                      💣 Error! {workflowError}
+                    </small>
+                  ) : workflowData.length > 0 ? (
                     <small className="text-muted">
                       ✅ <span className="text-success">Success.</span> Loaded{" "}
-                      {data.apps.length} app names.
+                      {workflowData.length} app names.
                     </small>
                   ) : (
                     <small className="text-muted">
@@ -146,6 +173,8 @@ function WorkflowTab() {
             </Card.Footer>
           </Card>
         </Col>
+
+        <Col>3</Col>
       </Row>
     </Container>
   );

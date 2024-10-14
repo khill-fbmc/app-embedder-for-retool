@@ -1,9 +1,8 @@
 import { useExtensionState } from "./useExtensionState";
 
 export function useActiveApp() {
-  const app = useExtensionState((s) => s.getActiveApp());
-  const updateActiveApp = useExtensionState((s) => s.updateActiveApp);
-  const setActiveApp = useExtensionState((s) => s.setActiveApp);
+  const apps = useExtensionState((s) => s.apps);
+  const activeAppName = useExtensionState((s) => s.activeAppName);
 
-  return { app, updateActiveApp, setActiveApp };
+  return apps.find((app) => app.name === activeAppName);
 }

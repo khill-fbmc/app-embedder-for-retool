@@ -4,17 +4,17 @@ import { clsx } from "clsx";
 import React, { useMemo } from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
-import { useActiveApp } from "@/hooks/useActiveApp";
 import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
-import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
+import { useRetoolUrl } from "@/hooks/useRetoolUrl";
 
 import type { RetoolApp, UrlParam } from "@/types/extension";
 
 // Base props
 type BaseProps = {
   app: RetoolApp;
+  isActive: boolean;
 };
 
 type StdProps = BaseProps & {
@@ -28,17 +28,12 @@ type EditProps = BaseProps & {
 
 type Props = EditProps | StdProps;
 
-function AppCard({ app, ...props }: Props) {
+function AppCard({ app, isActive, ...props }: Props) {
   const { endEditMode } = useEditMode();
   const { domain } = useDomain();
-  const { app: activeApp, setActiveApp } = useActiveApp();
+  const setActiveApp = useExtensionState((s) => s.setActiveApp);
 
-  const appUrl = useRetoolAppUrl(domain, app);
-
-  const isActive = useMemo(
-    () => app.name === activeApp?.name,
-    [app, activeApp]
-  );
+  const appUrl = useRetoolUrl(domain, app);
 
   return (
     <Card

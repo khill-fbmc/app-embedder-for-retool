@@ -6,8 +6,8 @@ import { useEditMode } from "@/hooks/useEditMode";
 import { getActiveApp, useExtensionState } from "@/hooks/useExtensionState";
 
 import AppCard from "../components/AppCard";
-import DomainInput from "../components/DomainInput";
 import AppForm from "../components/AppForm";
+import DomainInput from "../components/DomainInput";
 
 import type { RetoolApp } from "@/types/extension";
 
@@ -27,7 +27,12 @@ function ConfigTab() {
           <h3 className="mt-2">Current App</h3>
           {!isEditing ? (
             <Container className="pt-2">
-              <AppCard editable app={app!} onEdit={() => startEditMode()} />
+              <AppCard
+                isActive={false}
+                editable
+                app={app!}
+                onEdit={() => startEditMode()}
+              />
             </Container>
           ) : (
             <FormProvider {...methods}>

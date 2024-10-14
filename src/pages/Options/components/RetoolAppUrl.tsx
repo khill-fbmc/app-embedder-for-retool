@@ -1,12 +1,12 @@
 import React from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
 
-import { useRetoolUrl } from "@/hooks/useRetoolUrl";
+import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 
 import type { RetoolApp } from "@/types/extension";
 
 function RetoolAppUrl({ app, domain }: { app: RetoolApp; domain: string }) {
-  const url = useRetoolUrl(domain, app);
+  const url = useRetoolAppUrl(domain, app);
 
   return (
     <Form.Group className="mb-4" controlId="url">

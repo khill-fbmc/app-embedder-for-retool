@@ -1,8 +1,8 @@
 import type { RetoolApp } from "@/types/extension";
 
-function useRetoolUrl(domain: string): (app: RetoolApp) => string;
-function useRetoolUrl(domain: string, app?: RetoolApp): string;
-function useRetoolUrl(domain: string, app?: RetoolApp) {
+function useRetoolAppUrl(domain: string): (app: RetoolApp) => string;
+function useRetoolAppUrl(domain: string, app?: RetoolApp): string;
+function useRetoolAppUrl(domain: string, app?: RetoolApp) {
   if (!app) {
     return (app: RetoolApp) => composeAppUrl(domain, app);
   } else {
@@ -28,4 +28,4 @@ function composeAppUrl(domain: string, app: RetoolApp) {
   return `${url.toString()}#${hashParams.toString()}`;
 }
 
-export { useRetoolUrl };
+export { useRetoolAppUrl };

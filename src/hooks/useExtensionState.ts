@@ -12,7 +12,7 @@ export type State = {
   activeAppName: RetoolApp["name"] | undefined;
   // activeApp: RetoolApp | undefined;
   workflow: {
-    url: string;
+    id: string;
     apiKey: string;
   };
   apps: RetoolApp[];
@@ -35,8 +35,8 @@ const initialState: State = {
   isEditing: false,
   activeAppName: INSPECTOR_APP["name"],
   workflow: {
-    url: "",
-    apiKey: "",
+    id: "13d34554-9891-40c0-a032-fda523774e97",
+    apiKey: "retool_wk_bde9d74b27644cf3a0691211ff18dee2",
   },
   apps: [INSPECTOR_APP, ...DEMO_APPS],
 };

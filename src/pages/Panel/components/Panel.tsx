@@ -4,14 +4,14 @@ import React from "react";
 
 import { useActiveApp } from "@/hooks/useActiveApp";
 import { useDomain } from "@/hooks/useDomain";
-import { useRetoolUrl } from "@/hooks/useRetoolUrl";
+import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 
 import UnsetSettingError from "./UnsetSettingError";
 
 function Panel() {
   const { domain } = useDomain();
   const app = useActiveApp();
-  const appUrl = useRetoolUrl(domain);
+  const appUrl = useRetoolAppUrl(domain);
 
   if (!domain || domain === "") {
     return <UnsetSettingError unsetSetting="Instance Name" />;

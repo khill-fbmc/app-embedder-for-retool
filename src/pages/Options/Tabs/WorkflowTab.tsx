@@ -1,4 +1,3 @@
-import JsonView from "@uiw/react-json-view";
 import React, { useEffect, useState } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
@@ -8,40 +7,44 @@ import Form from "react-bootstrap/Form";
 import useSWR from "swr";
 
 import { useExtensionState } from "@/hooks/useExtensionState";
-import { WorkflowDataFetcher } from "@/lib/WorkflowDataFetcher";
+import { getWorkflowApps } from "@/lib/WorkflowDataFetcher";
+
+import { SimpleJsonView } from "../components/SimpleJsonView";
 
 import type { RetoolApp } from "@/types/extension";
 
 function WorkflowTab() {
-  const { apiKey, url } = useExtensionState((s) => s.workflow);
+  const workflow = useExtensionState((s) => s.workflow);
   const updateWorkflow = useExtensionState((s) => s.updateWorkflow);
 
-  const [useWorkflowProvider, setUseWorkflowProvider] = useState(false);
+  const [useProvider, setUseProvider] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [workflowData, setWorkflowData] = useState<RetoolApp[]>([]);
   const [workflowError, setWorkflowError] = useState<string | undefined>();
 
-  useEffect(() => {
-    const fetch = async () => {
-      setIsLoading(true);
-      try {
-        const reply = await WorkflowDataFetcher(apiKey, url);
-        if (reply.apps) {
-          setWorkflowData(reply.apps);
-        }
-        console.log(reply);
-      } catch (e) {
-        setWorkflowError((e as Error).message);
+  const fetchRemoteApps = async () => {
+    setIsLoading(true);
+    try {
+      const reply = await getWorkflowApps(workflow.apiKey, workflow.id);
+      if (reply.apps) {
+        setWorkflowData(reply.apps);
       }
-      setIsLoading(false);
-    };
-    if (url && apiKey) fetch();
-  }, [apiKey, url]);
+    } catch (e) {
+      setWorkflowError((e as Error).message);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (useProvider && workflow.id && workflow.apiKey) fetchRemoteApps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useProvider, workflow]);
 
   return (
     <Container>
       <div className="my-2 d-flex">
-        <h2 className="mx-auto">Workflow Apps List</h2>
+        <h2 className="mx-auto">Remote Apps List</h2>
       </div>
 
       <Row>
@@ -69,11 +72,11 @@ function WorkflowTab() {
                   input field, into a dynamic list fetched from a Retool
                   Workflow.
                 </p>
-                <Form.Label>Workflow URL</Form.Label>
+                <Form.Label>Workflow ID</Form.Label>
                 <Form.Control
-                  value={url}
-                  disabled={!useWorkflowProvider}
-                  onChange={(e) => updateWorkflow({ url: e.target.value })}
+                  value={workflow.id}
+                  disabled={!useProvider}
+                  onChange={(e) => updateWorkflow({ id: e.target.value })}
                 />
                 <Form.Text className="text-muted">
                   Supply a Retool workflow URL that returns a <code>200</code>{" "}
@@ -84,48 +87,32 @@ function WorkflowTab() {
                 <Form.Label>Workflow API Key</Form.Label>
                 <Form.Control
                   type="password"
-                  value={apiKey}
-                  disabled={!useWorkflowProvider}
+                  value={workflow.apiKey}
+                  disabled={!useProvider}
                   onChange={(e) => updateWorkflow({ apiKey: e.target.value })}
                 />
                 <Form.Text className="text-muted">
                   Copy this value from Retool
                 </Form.Text>
               </Form.Group>
-
-              <Container className="d-flex justify-content-end">
-                <Button
-                  variant={useWorkflowProvider ? "warning" : "primary"}
-                  title={`Enable using a workflow to provide the app name list`}
-                  onClick={() => setUseWorkflowProvider((old) => !old)}
-                >
-                  {useWorkflowProvider ? "Disable Provider" : "Enable Provider"}
-                </Button>
-              </Container>
             </Card.Body>
             <Card.Footer>
               <div className="d-flex justify-content-between">
-                <small className="text-muted">Last updated 3 mins ago</small>
-                <div>
-                  {!useWorkflowProvider ? (
-                    <small className="text-muted">❌ Disabled</small>
-                  ) : isLoading ? (
-                    <small className="text-muted">🚀 Fetching...</small>
-                  ) : workflowError ? (
-                    <small className="text-danger">
-                      💣 Error! {workflowError}
-                    </small>
-                  ) : workflowData.length > 0 ? (
-                    <small className="text-muted">
-                      ✅ <span className="text-success">Success.</span> Loaded{" "}
-                      {workflowData.length} app names.
-                    </small>
-                  ) : (
-                    <small className="text-muted">
-                      🔦 No results returned.
-                    </small>
-                  )}
-                </div>
+                <Button
+                  variant={useProvider ? "warning" : "primary"}
+                  title={`Enable using a workflow to provide the app name list`}
+                  onClick={() => setUseProvider((old) => !old)}
+                >
+                  {useProvider ? "Disable Provider" : "Enable Provider"}
+                </Button>
+                <Button
+                  variant={"success"}
+                  disabled={useProvider === false}
+                  title={`Refresh the app list from the remote workflow`}
+                  onClick={() => fetchRemoteApps()}
+                >
+                  Refresh Apps
+                </Button>
               </div>
             </Card.Footer>
           </Card>
@@ -140,17 +127,25 @@ function WorkflowTab() {
               </div>
             </Card.Header>
             <Card.Body>
-              {workflowData.length === 0 ? (
-                <JsonView value={workflowData} />
+              {isLoading ? (
+                <h1>Loading...</h1>
               ) : (
-                <Alert>No Apps Returned From Workflow</Alert>
+                <>
+                  {workflowData.length > 0 ? (
+                    <SimpleJsonView value={workflowData} />
+                  ) : (
+                    <Alert variant="danger">
+                      No Apps Returned From Workflow
+                    </Alert>
+                  )}
+                </>
               )}
             </Card.Body>
             <Card.Footer>
               <div className="d-flex justify-content-between">
                 <small className="text-muted">Last update: 3 mins ago</small>
                 <div>
-                  {!useWorkflowProvider ? (
+                  {!useProvider ? (
                     <small className="text-muted">❌ Disabled</small>
                   ) : isLoading ? (
                     <small className="text-muted">🚀 Fetching...</small>
@@ -173,8 +168,6 @@ function WorkflowTab() {
             </Card.Footer>
           </Card>
         </Col>
-
-        <Col>3</Col>
       </Row>
     </Container>
   );

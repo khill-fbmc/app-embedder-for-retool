@@ -1,18 +1,17 @@
 import type { RetoolApp } from "@/types/extension";
 
-export async function WorkflowDataFetcher(
+export async function getWorkflowApps(
   apiKey: string,
-  url: string
+  id: string
 ): Promise<{ apps: RetoolApp[] }> {
-  return fetch(url, {
+  const url = `https://api.retool.com/v1/workflows/${id}/startTrigger`;
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-Workflow-Api-Key": apiKey,
     },
-  }).then((res) => {
-    const json = res.json();
-    console.log(json);
-    return json;
   });
+
+  return await res.json();
 }

@@ -1,14 +1,14 @@
-import JsonView from "@uiw/react-json-view";
-import { githubLightTheme } from "@uiw/react-json-view/githubLight";
 import React from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
 import { useExtensionState } from "@/hooks/useExtensionState";
 
+import { SimpleJsonView } from "../components/SimpleJsonView";
+
 function JSONTab() {
   const state = useExtensionState();
-
+  console.log(state);
   return (
     <Container className="pb-5">
       <div className="d-flex flex-column align-items-center">
@@ -18,14 +18,7 @@ function JSONTab() {
             <Card.Subtitle>Stored Apps and Settings</Card.Subtitle>
           </Card.Header>
           <Card.Body className="px-4">
-            <JsonView
-              value={state}
-              collapsed={3}
-              displayDataTypes={false}
-              enableClipboard={false}
-              style={githubLightTheme}
-              shortenTextAfterLength={0}
-            />
+            <SimpleJsonView value={state} />
           </Card.Body>
         </Card>
       </div>

@@ -7,7 +7,7 @@ import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
 import { useExtensionState } from "@/hooks/useExtensionState";
-import { useRetoolUrl } from "@/hooks/useRetoolUrl";
+import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 
 import type { RetoolApp, UrlParam } from "@/types/extension";
 
@@ -33,7 +33,7 @@ function AppCard({ app, isActive, ...props }: Props) {
   const { domain } = useDomain();
   const setActiveApp = useExtensionState((s) => s.setActiveApp);
 
-  const appUrl = useRetoolUrl(domain, app);
+  const appUrl = useRetoolAppUrl(domain, app);
 
   return (
     <Card

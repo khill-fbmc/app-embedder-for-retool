@@ -47,7 +47,7 @@ function Options() {
           <StorageTab />
         </Tab>
         <Tab eventKey="workflow" title="Workflow">
-          <WorkflowTab />
+          {/* <WorkflowTab /> */}
         </Tab>
         <Tab eventKey="json" title="JSON">
           <JSONTab />

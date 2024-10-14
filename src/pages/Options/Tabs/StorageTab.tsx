@@ -1,13 +1,12 @@
 import React from "react";
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 
-import { useExtensionState } from "@/hooks/useExtensionState";
+import { reset, useExtensionState } from "@/hooks/useExtensionState";
 
 import AppCard from "../components/AppCard";
 
 function StorageTab() {
   const apps = useExtensionState((s) => s.apps);
-  const reset = useExtensionState((s) => s.reset);
 
   return (
     <Container className="px-5 pb-5 mt-4">
@@ -18,7 +17,7 @@ function StorageTab() {
             Here are all your saved Retool App Definitions
             <hr />
             <div className="d-flex justify-content-end">
-              <Button onClick={() => reset()} variant="outline-primary">
+              <Button onClick={reset} variant="outline-primary">
                 Reset State
               </Button>
             </div>

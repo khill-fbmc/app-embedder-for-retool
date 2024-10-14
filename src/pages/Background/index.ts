@@ -1,7 +1,6 @@
 /// <reference path="../../../node_modules/chrome-types/index.d.ts" />
 
-import { log } from "../../lib/logger";
-import { storage } from "../../lib/storage";
+import { log } from "@/lib/logger";
 
 chrome.commands.onCommand.addListener(() => {
   chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
@@ -14,20 +13,20 @@ chrome.runtime.onInstalled.addListener(async () => {
 
   log("Loading Settings");
 
-  const options = await storage.load();
+  // const options = await storage.load();
 
-  if (!options?.domain) {
-    await storage.save({
-      domain: "",
-      app: "",
-      env: "production",
-      version: "latest",
-      workflowUrl: "",
-      workflowApiKey: "",
-      urlParams: [],
-      hashParams: [],
-    });
+  // if (!options?.domain) {
+  //   await storage.save({
+  //     domain: "",
+  //     app: "",
+  //     env: "production",
+  //     version: "latest",
+  //     workflowUrl: "",
+  //     workflowApiKey: "",
+  //     urlParams: [],
+  //     hashParams: [],
+  //   });
 
-    log("Default settings set.");
-  }
+  //   log("Default settings set.");
+  // }
 });

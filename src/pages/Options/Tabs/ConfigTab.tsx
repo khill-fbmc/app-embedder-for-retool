@@ -3,7 +3,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { useEditMode } from "@/hooks/useEditMode";
-import { useExtensionState } from "@/hooks/useExtensionState";
+import { getActiveApp, useExtensionState } from "@/hooks/useExtensionState";
 
 import AppCard from "../components/AppCard";
 import DomainInput from "../components/DomainInput";
@@ -14,7 +14,8 @@ import type { RetoolApp } from "@/types/extension";
 function ConfigTab() {
   const methods = useForm<RetoolApp>();
   const { isEditing, startEditMode } = useEditMode();
-  const app = useExtensionState((s) => s.getActiveApp());
+
+  const app = getActiveApp();
 
   return (
     <>

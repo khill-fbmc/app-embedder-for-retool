@@ -6,9 +6,8 @@ import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
 import type { RetoolApp } from "@/types/extension";
 
-type State = {
+export type State = {
   domain: string;
-  apps: RetoolApp[];
   isEditing: boolean;
   activeAppName: RetoolApp["name"] | undefined;
   // activeApp: RetoolApp | undefined;
@@ -16,21 +15,20 @@ type State = {
     url: string;
     apiKey: string;
   };
+  apps: RetoolApp[];
 };
 
-interface Actions {
-  reset: () => void;
+export type Actions = {
   setDomain: (domain: State["domain"]) => void;
   setActiveApp: (activeAppName: State["activeAppName"]) => void;
   addApp: (app: RetoolApp) => void;
   updateApp: (name: string, props: Partial<RetoolApp>) => void;
-  getActiveApp: () => RetoolApp | undefined;
   updateActiveApp: (props: Partial<RetoolApp>) => void;
   setEditMode: (state: boolean) => void;
   updateWorkflow: (workflow: Partial<State["workflow"]>) => void;
-}
+};
 
-export const STORAGE_KEY = "app-embedder-for-retool";
+export const STORAGE_KEY = "app-embedder-for-retool2";
 
 const initialState: State = {
   domain: "",
@@ -47,7 +45,6 @@ export const useExtensionState = create<State & Actions>()(
   persist(
     (set, get) => ({
       ...initialState,
-      reset: () => set(initialState),
       setDomain: (domain) => set(() => ({ domain })),
       setEditMode: (isEditing) => set(() => ({ isEditing })),
       setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
@@ -59,9 +56,6 @@ export const useExtensionState = create<State & Actions>()(
           }),
         }));
       },
-      getActiveApp: () => {
-        return get().apps.find((app) => app.name === get().activeAppName);
-      },
       updateActiveApp: (props) => {
         const name = get().activeAppName;
         if (name) {
@@ -69,9 +63,10 @@ export const useExtensionState = create<State & Actions>()(
         }
       },
       updateWorkflow: (props) =>
-        set((state) =>
-          Object.assign(state, { workflow: { ...state.workflow, ...props } })
-        ),
+        set((state) => ({
+          ...state,
+          workflow: { ...state.workflow, ...props },
+        })),
     }),
     {
       name: STORAGE_KEY,
@@ -79,3 +74,10 @@ export const useExtensionState = create<State & Actions>()(
     }
   )
 );
+
+export const getActiveApp = () => {
+  const state = useExtensionState.getState();
+  return state.apps.find((app) => app.name === state.activeAppName);
+};
+
+export const reset = () => useExtensionState.setState(initialState);

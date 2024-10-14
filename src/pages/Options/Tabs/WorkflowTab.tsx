@@ -10,13 +10,13 @@ import { useExtensionState } from "@/hooks/useExtensionState";
 import { useWorkflow } from "@/hooks/useWorkflow2";
 
 function WorkflowTab() {
+  const workflow = useExtensionState((s) => s.workflow);
   const updateWorkflow = useExtensionState((s) => s.updateWorkflow);
-  const { apiKey, url } = useExtensionState((s) => s.workflow);
 
   const [useWorkflowProvider, setUseWorkflowProvider] = useState(false);
 
-  // const { data, error, isLoading } = useWorkflow(apiKey, url);
-  const data = { apps: [] };
+  const { data, error, isLoading } = useWorkflow(workflow.apiKey, workflow.url);
+
   return (
     <Container>
       <div className="my-2 d-flex">
@@ -50,7 +50,7 @@ function WorkflowTab() {
                 </p>
                 <Form.Label>Workflow URL</Form.Label>
                 <Form.Control
-                  value={url}
+                  value={workflow?.url}
                   disabled={!useWorkflowProvider}
                   onChange={(e) => updateWorkflow({ url: e.target.value })}
                 />
@@ -63,7 +63,7 @@ function WorkflowTab() {
                 <Form.Label>Workflow API Key</Form.Label>
                 <Form.Control
                   type="password"
-                  value={apiKey}
+                  value={workflow?.apiKey}
                   disabled={!useWorkflowProvider}
                   onChange={(e) => updateWorkflow({ apiKey: e.target.value })}
                 />

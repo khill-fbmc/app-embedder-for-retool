@@ -4,17 +4,11 @@ import React from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
-import { type State, useExtensionState } from "@/hooks/useExtensionState";
+import { useExtensionState } from "@/hooks/useExtensionState";
 
 function JSONTab() {
-  // const state = {};
   const state = useExtensionState();
-  // const state = useExtensionState((state) => {
-  //   return {
-  //     activeAppName: state.activeAppName,
-  //     apps: state.apps,
-  //   };
-  // });
+
   return (
     <Container className="pb-5">
       <div className="d-flex flex-column align-items-center">

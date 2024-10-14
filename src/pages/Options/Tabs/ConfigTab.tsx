@@ -7,7 +7,7 @@ import { getActiveApp, useExtensionState } from "@/hooks/useExtensionState";
 
 import AppCard from "../components/AppCard";
 import DomainInput from "../components/DomainInput";
-import AppForm from "./AppForm";
+import AppForm from "../components/AppForm";
 
 import type { RetoolApp } from "@/types/extension";
 

@@ -2,20 +2,21 @@ import "./Panel.css";
 
 import React from "react";
 
+import { useActiveApp } from "@/hooks/useActiveApp";
 import { useActiveAppUrl } from "@/hooks/useActiveAppUrl";
-import { useExtensionState } from "@/hooks/useExtensionState";
+import { useDomain } from "@/hooks/useDomain";
 
 import UnsetSettingError from "./UnsetSettingError";
 
 function Panel() {
-  const domain = useExtensionState((s) => s.domain);
-  const activeAppName = useExtensionState((s) => s.activeAppName);
+  const { domain } = useDomain();
+  const { app } = useActiveApp();
 
   const url = useActiveAppUrl();
 
   return domain === "" ? (
     <UnsetSettingError unsetSetting="Instance Name" />
-  ) : activeAppName === "" ? (
+  ) : app?.name === "" ? (
     <UnsetSettingError unsetSetting="App Name" />
   ) : (
     <iframe

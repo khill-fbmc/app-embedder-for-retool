@@ -5,7 +5,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
-import { useExtensionState } from "@/hooks/useExtensionState";
+import { useStore } from "@/hooks/useStore";
 import { errorToast, successToast } from "@/lib/toast";
 
 import AddButton from "./AddButton";
@@ -25,7 +25,7 @@ const INIT_PARAM = { param: "", value: "" };
 function AppForm({ app }: Props) {
   const { domain } = useDomain();
   const { setEditMode } = useEditMode();
-  const updateActiveApp = useExtensionState((s) => s.updateActiveApp);
+  const updateActiveApp = useStore((s) => s.updateActiveApp);
 
   const {
     control,

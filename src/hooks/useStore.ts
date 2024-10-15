@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import ChromeStateStorage from "@/lib/ChromeStateStorage";
 import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
 import type { RetoolApp } from "@/types/extension";
@@ -26,6 +25,8 @@ export type Actions = {
   updateActiveApp: (props: Partial<RetoolApp>) => void;
   setEditMode: (state: boolean) => void;
   updateWorkflow: (workflow: Partial<State["workflow"]>) => void;
+  getActiveApp: () => RetoolApp | undefined;
+  reset: () => void;
 };
 
 export const STORAGE_KEY = "app-embedder-for-retool2";
@@ -41,10 +42,11 @@ const initialState: State = {
   apps: [INSPECTOR_APP, ...DEMO_APPS],
 };
 
-export const useExtensionState = create<State & Actions>()(
+export const useStore = create<State & Actions>()(
   // persist(
   (set, get) => ({
     ...initialState,
+    reset: () => useStore.setState(initialState),
     setDomain: (domain) => set(() => ({ domain })),
     setEditMode: (isEditing) => set(() => ({ isEditing })),
     setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
@@ -62,11 +64,16 @@ export const useExtensionState = create<State & Actions>()(
         get().updateApp(name, props);
       }
     },
-    updateWorkflow: (props) =>
+    updateWorkflow: (props) => {
       set((state) => ({
         ...state,
         workflow: { ...state.workflow, ...props },
-      })),
+      }));
+    },
+    getActiveApp: () => {
+      const activeAppName = get().activeAppName;
+      return get().apps.find((app) => app.name === activeAppName);
+    },
   })
   //   {
   //     name: STORAGE_KEY,
@@ -74,10 +81,3 @@ export const useExtensionState = create<State & Actions>()(
   //   }
   // )
 );
-
-export const getActiveApp = () => {
-  const state = useExtensionState.getState();
-  return state.apps.find((app) => app.name === state.activeAppName);
-};
-
-export const reset = () => useExtensionState.setState(initialState);

@@ -1,7 +1,7 @@
-import { useExtensionState } from "./useExtensionState";
+import { useStore } from "./useStore";
 
 export function useDomain() {
-  const domain = useExtensionState((s) => s.domain);
-  const setDomain = useExtensionState((s) => s.setDomain);
+  const domain = useStore((s) => s.domain);
+  const setDomain = useStore((s) => s.setDomain);
   return { domain, setDomain };
 }

@@ -1,17 +1,15 @@
 import "./AppCard.css";
 
 import { clsx } from "clsx";
-import React, { useMemo } from "react";
+import React from "react";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 
-import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
-import { useExtensionState } from "@/hooks/useExtensionState";
 import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
+import { useStore } from "@/hooks/useStore";
 
 import type { RetoolApp, UrlParam } from "@/types/extension";
 
-// Base props
 type BaseProps = {
   app: RetoolApp;
   isActive: boolean;
@@ -30,8 +28,8 @@ type Props = EditProps | StdProps;
 
 function AppCard({ app, isActive, ...props }: Props) {
   const { endEditMode } = useEditMode();
-  const domain = useExtensionState((s) => s.domain);
-  const setActiveApp = useExtensionState((s) => s.setActiveApp);
+  const domain = useStore((s) => s.domain);
+  const setActiveApp = useStore((s) => s.setActiveApp);
 
   const appUrl = useRetoolAppUrl(domain, app);
 

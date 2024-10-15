@@ -1,8 +1,8 @@
-import { useExtensionState } from "./useExtensionState";
+import { useStore } from "./useStore";
 
 export function useActiveApp() {
-  const apps = useExtensionState((s) => s.apps);
-  const activeAppName = useExtensionState((s) => s.activeAppName);
+  const apps = useStore((s) => s.apps);
+  const activeAppName = useStore((s) => s.activeAppName);
 
   return apps.find((app) => app.name === activeAppName);
 }

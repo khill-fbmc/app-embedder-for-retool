@@ -2,12 +2,12 @@ import React from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
-import { useExtensionState } from "@/hooks/useExtensionState";
+import { useStore } from "@/hooks/useStore";
 
 import { SimpleJsonView } from "../components/SimpleJsonView";
 
 function JSONTab() {
-  const state = useExtensionState();
+  const state = useStore();
   console.log(state);
   return (
     <Container className="pb-5">

@@ -1,13 +1,14 @@
 import React from "react";
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 
-import { reset, useExtensionState } from "@/hooks/useExtensionState";
+import { useStore } from "@/hooks/useStore";
 
 import AppCard from "../components/AppCard";
 
 function StorageTab() {
-  const apps = useExtensionState((s) => s.apps);
-  const activeAppName = useExtensionState((s) => s.activeAppName);
+  const apps = useStore((s) => s.apps);
+  const reset = useStore((s) => s.reset);
+  const activeAppName = useStore((s) => s.activeAppName);
 
   return (
     <Container className="px-5 pb-5 mt-4">

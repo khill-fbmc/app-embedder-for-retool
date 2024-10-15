@@ -1,8 +1,8 @@
-import { useExtensionState } from "./useExtensionState";
+import { useStore } from "./useStore";
 
 export function useEditMode() {
-  const isEditing = useExtensionState((s) => s.isEditing);
-  const setEditMode = useExtensionState((s) => s.setEditMode);
+  const isEditing = useStore((s) => s.isEditing);
+  const setEditMode = useStore((s) => s.setEditMode);
   const startEditMode = () => setEditMode(true);
   const endEditMode = () => setEditMode(false);
 

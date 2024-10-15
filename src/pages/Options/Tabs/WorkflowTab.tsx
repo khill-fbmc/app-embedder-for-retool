@@ -6,7 +6,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import useSWR from "swr";
 
-import { useExtensionState } from "@/hooks/useExtensionState";
+import { useStore } from "@/hooks/useStore";
 import { getWorkflowApps } from "@/lib/WorkflowDataFetcher";
 
 import { SimpleJsonView } from "../components/SimpleJsonView";
@@ -14,8 +14,8 @@ import { SimpleJsonView } from "../components/SimpleJsonView";
 import type { RetoolApp } from "@/types/extension";
 
 function WorkflowTab() {
-  const workflow = useExtensionState((s) => s.workflow);
-  const updateWorkflow = useExtensionState((s) => s.updateWorkflow);
+  const workflow = useStore((s) => s.workflow);
+  const updateWorkflow = useStore((s) => s.updateWorkflow);
 
   const [useProvider, setUseProvider] = useState(false);
 

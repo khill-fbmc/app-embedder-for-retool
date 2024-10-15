@@ -30,7 +30,7 @@ type Props = EditProps | StdProps;
 
 function AppCard({ app, isActive, ...props }: Props) {
   const { endEditMode } = useEditMode();
-  const { domain } = useDomain();
+  const domain = useExtensionState((s) => s.domain);
   const setActiveApp = useExtensionState((s) => s.setActiveApp);
 
   const appUrl = useRetoolAppUrl(domain, app);
@@ -65,13 +65,13 @@ function AppCard({ app, isActive, ...props }: Props) {
           {app.query.length > 0 && (
             <Col>
               <h5>Query Params</h5>
-              <Parameters params={app.query} />
+              <Parameters type="query" params={app.query} />
             </Col>
           )}
           {app.hash.length > 0 && (
             <Col>
               <h5>Hash Params</h5>
-              <Parameters params={app.hash} />
+              <Parameters type="hash" params={app.hash} />
             </Col>
           )}
         </Row>
@@ -113,12 +113,15 @@ function AppCard({ app, isActive, ...props }: Props) {
 
 export default AppCard;
 
-const Parameters: React.FC<{ params: UrlParam[] }> = ({ params }) => {
+const Parameters: React.FC<{
+  type: "query" | "hash";
+  params: UrlParam[];
+}> = ({ type, params }) => {
   return (
     <dl>
       {params.map((p) => (
         <div key={p.param}>
-          <dt className="query">{p.param}</dt>
+          <dt className={type}>{p.param}</dt>
           <dd className="text-muted">{p.value}</dd>
         </div>
       ))}

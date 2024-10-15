@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import ChromeStateStorage from "@/lib/ChromeStateStorage";
 import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
 import type { RetoolApp } from "@/types/extension";
@@ -32,7 +33,7 @@ export type Actions = {
 export const STORAGE_KEY = "app-embedder-for-retool2";
 
 const initialState: State = {
-  domain: "",
+  domain: "fortunabmc",
   isEditing: false,
   activeAppName: INSPECTOR_APP["name"],
   workflow: {
@@ -43,41 +44,41 @@ const initialState: State = {
 };
 
 export const useStore = create<State & Actions>()(
-  // persist(
-  (set, get) => ({
-    ...initialState,
-    reset: () => useStore.setState(initialState),
-    setDomain: (domain) => set(() => ({ domain })),
-    setEditMode: (isEditing) => set(() => ({ isEditing })),
-    setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
-    addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
-    updateApp: (name, props) => {
-      set((state) => ({
-        apps: state.apps.map((app) => {
-          return app.name === name ? { ...app, ...props } : app;
-        }),
-      }));
-    },
-    updateActiveApp: (props) => {
-      const name = get().activeAppName;
-      if (name) {
-        get().updateApp(name, props);
-      }
-    },
-    updateWorkflow: (props) => {
-      set((state) => ({
-        ...state,
-        workflow: { ...state.workflow, ...props },
-      }));
-    },
-    getActiveApp: () => {
-      const activeAppName = get().activeAppName;
-      return get().apps.find((app) => app.name === activeAppName);
-    },
-  })
-  //   {
-  //     name: STORAGE_KEY,
-  //     storage: createJSONStorage(() => ChromeStateStorage),
-  //   }
-  // )
+  persist(
+    (set, get) => ({
+      ...initialState,
+      reset: () => set(initialState),
+      setDomain: (domain) => set(() => ({ domain })),
+      setEditMode: (isEditing) => set(() => ({ isEditing })),
+      setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
+      addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
+      updateApp: (name, props) => {
+        set((state) => ({
+          apps: state.apps.map((app) => {
+            return app.name === name ? { ...app, ...props } : app;
+          }),
+        }));
+      },
+      updateActiveApp: (props) => {
+        const name = get().activeAppName;
+        if (name) {
+          get().updateApp(name, props);
+        }
+      },
+      updateWorkflow: (props) => {
+        set((state) => ({
+          ...state,
+          workflow: { ...state.workflow, ...props },
+        }));
+      },
+      getActiveApp: () => {
+        const activeAppName = get().activeAppName;
+        return get().apps.find((app) => app.name === activeAppName);
+      },
+    }),
+    {
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => ChromeStateStorage),
+    }
+  )
 );

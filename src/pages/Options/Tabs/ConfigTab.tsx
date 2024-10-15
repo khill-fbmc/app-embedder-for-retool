@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -28,9 +28,9 @@ function ConfigTab() {
           {!isEditing ? (
             <Container className="pt-2">
               <AppCard
-                isActive={false}
+                isActive
                 editable
-                app={app!}
+                app={app}
                 onEdit={() => startEditMode()}
               />
             </Container>

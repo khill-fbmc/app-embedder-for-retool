@@ -8,10 +8,12 @@ import { useEditMode } from "@/hooks/useEditMode";
 import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 import { useStore } from "@/hooks/useStore";
 
+import AppVisibilityBadge from "./AppVisibilityBadge";
+
 import type { RetoolApp, UrlParam } from "@/types/extension";
 
 type BaseProps = {
-  app: RetoolApp;
+  app?: RetoolApp;
   isActive: boolean;
 };
 
@@ -41,40 +43,30 @@ function AppCard({ app, isActive, ...props }: Props) {
       <Card.Header
         className={clsx(
           "d-flex justify-content-between align-items-center",
-          isActive && `bg-${app.env}`
+          isActive && `bg-${app?.env}`,
+          isActive && app?.env === "production" && "text-white",
+          isActive && app?.env === "development" && "text-white"
         )}
       >
-        <div className="d-flex gap-2 align-items-center">
-          {app.name}
-          <Badge pill bg="secondary">
-            {app.version[0] === "l" ? app.version : `v${app.version}`}
-          </Badge>
-        </div>
-
-        {/* {isActive && <span className="ml-auto">⭐️</span>} */}
-        <span className={clsx("badge", `bg-${app.env}`)}>{app.env}</span>
+        {app?.name}
+        <span className={clsx("badge", `bg-${app?.env}`)}>{app?.env}</span>
       </Card.Header>
       <Card.Body>
-        <Card.Text>
-          Public App:{" "}
-          <span className="text-muted">{app.public ? "Yes" : "No"}</span>
-        </Card.Text>
         <Row>
-          {app.query.length > 0 && (
+          {app?.query && (
             <Col>
               <h5>Query Params</h5>
               <Parameters type="query" params={app.query} />
             </Col>
           )}
-          {app.hash.length > 0 && (
+          {app?.hash && (
             <Col>
               <h5>Hash Params</h5>
               <Parameters type="hash" params={app.hash} />
             </Col>
           )}
         </Row>
-        <br />
-        <div className="d-flex justify-space-between">
+        <div className="d-flex my-2 justify-content-center">
           <a
             target="_blank"
             rel="noreferrer"
@@ -83,6 +75,17 @@ function AppCard({ app, isActive, ...props }: Props) {
           >
             <i className="bi bi-box-arrow-up-right"></i>Open in Retool
           </a>
+        </div>
+      </Card.Body>
+      <Card.Footer>
+        <div className="d-flex justify-space-between">
+          <div className="d-flex gap-2 align-items-center">
+            <AppVisibilityBadge isPublic={app?.public} />
+            <Badge pill bg="secondary">
+              {app?.version[0] === "l" ? app?.version : `v${app?.version}`}
+            </Badge>
+          </div>
+
           <Button
             className="btn-sm ms-auto"
             onClick={() => {
@@ -90,7 +93,7 @@ function AppCard({ app, isActive, ...props }: Props) {
                 props.onEdit();
               } else {
                 endEditMode();
-                setActiveApp(app.name);
+                setActiveApp(app?.name);
               }
             }}
             variant={
@@ -104,7 +107,7 @@ function AppCard({ app, isActive, ...props }: Props) {
             {props.editable ? "Edit" : isActive ? "⭐️ Active" : "Activate"}
           </Button>
         </div>
-      </Card.Body>
+      </Card.Footer>
     </Card>
   );
 }

@@ -1,9 +1,10 @@
-import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import React, { useMemo, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { useEditMode } from "@/hooks/useEditMode";
 import { useStore } from "@/hooks/useStore";
+import { successToast } from "@/lib/toast";
 
 import AppCard from "../components/AppCard";
 import AppForm from "../components/AppForm";
@@ -11,11 +12,25 @@ import DomainInput from "../components/DomainInput";
 
 import type { RetoolApp } from "@/types/extension";
 
+const NEW_APP: RetoolApp = {
+  name: "",
+  public: false,
+  version: "latest",
+  env: "development",
+  hash: [],
+  query: [],
+};
+
 function ConfigTab() {
   const methods = useForm<RetoolApp>();
   const { isEditing, startEditMode } = useEditMode();
-
   const app = useStore((s) => s.getActiveApp());
+  const updateActiveApp = useStore((s) => s.updateActiveApp);
+
+  const [creatingNew, setCreatingNew] = useState(false);
+  const createNewApp = () => {
+    setCreatingNew(true);
+  };
 
   return (
     <>
@@ -25,7 +40,17 @@ function ConfigTab() {
           <DomainInput />
 
           <h3 className="mt-2">Current App</h3>
-          {!isEditing ? (
+          {isEditing ? (
+            <FormProvider {...methods}>
+              <AppForm
+                app={app!}
+                onSave={(data) => {
+                  updateActiveApp(data);
+                  successToast("Edits saved.");
+                }}
+              />
+            </FormProvider>
+          ) : (
             <Container className="pt-2">
               <AppCard
                 isActive
@@ -34,13 +59,16 @@ function ConfigTab() {
                 onEdit={() => startEditMode()}
               />
             </Container>
-          ) : (
-            <FormProvider {...methods}>
-              <AppForm app={app!} />
-            </FormProvider>
           )}
         </Col>
       </Row>
+      {!isEditing && !creatingNew && (
+        <div className="d-flex mt-5">
+          <Button variant="success" className="mx-auto">
+            Create New
+          </Button>
+        </div>
+      )}
     </>
   );
 }

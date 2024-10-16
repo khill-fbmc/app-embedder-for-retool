@@ -17,6 +17,9 @@ function composeAppUrl(domain: string, app: RetoolApp) {
 
   app.query.forEach((q) => url.searchParams.append(q.param, q.value));
 
+  url.searchParams.append("_version", app.version);
+  url.searchParams.append("_environment", app.env);
+
   if (app.hash.length === 0) {
     return `${url.toString()}`;
   }

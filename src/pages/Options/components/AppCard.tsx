@@ -29,11 +29,22 @@ type EditProps = BaseProps & {
 type Props = EditProps | StdProps;
 
 function AppCard({ app, isActive, ...props }: Props) {
-  const { endEditMode } = useEditMode();
   const domain = useStore((s) => s.domain);
   const setActiveApp = useStore((s) => s.setActiveApp);
 
+  const { stopEditMode } = useEditMode();
   const appUrl = useRetoolAppUrl(domain, app);
+
+  const onPreview = () => window.open(appUrl, "_blank");
+
+  const onActivate = () => {
+    if (props.editable) {
+      props.onEdit();
+    } else {
+      stopEditMode();
+      setActiveApp(app?.name);
+    }
+  };
 
   return (
     <Card
@@ -53,59 +64,55 @@ function AppCard({ app, isActive, ...props }: Props) {
       </Card.Header>
       <Card.Body>
         <Row>
-          {app?.query && (
-            <Col>
-              <h5>Query Params</h5>
+          <Col>
+            <h5>Query Params</h5>
+            {app?.query && app.query.length ? (
               <Parameters type="query" params={app.query} />
-            </Col>
-          )}
-          {app?.hash && (
-            <Col>
-              <h5>Hash Params</h5>
+            ) : (
+              <small className="text-muted">none</small>
+            )}
+          </Col>
+
+          <Col>
+            <h5>Hash Params</h5>
+            {app?.hash && app.hash.length ? (
               <Parameters type="hash" params={app.hash} />
-            </Col>
-          )}
+            ) : (
+              <small className="text-muted">none</small>
+            )}
+          </Col>
         </Row>
-        <div className="d-flex my-2 justify-content-center">
-          <a
-            target="_blank"
-            rel="noreferrer"
-            className="btn-sm d-flex align-items-center gap-1"
-            href={appUrl}
-          >
-            <i className="bi bi-box-arrow-up-right"></i>Open in Retool
-          </a>
-        </div>
       </Card.Body>
       <Card.Footer>
-        <div className="d-flex justify-space-between">
+        <div className="d-flex justify-content-between">
           <div className="d-flex gap-2 align-items-center">
             <AppVisibilityBadge isPublic={app?.public} />
             <Badge pill bg="secondary">
               {app?.version[0] === "l" ? app?.version : `v${app?.version}`}
             </Badge>
           </div>
-
-          <Button
-            className="btn-sm ms-auto"
-            onClick={() => {
-              if (props.editable) {
-                props.onEdit();
-              } else {
-                endEditMode();
-                setActiveApp(app?.name);
+          <div className="d-flex gap-2 align-items-end">
+            <Button
+              variant="outline-success"
+              className="btn-sm d-flex gap-2"
+              onClick={onPreview}
+            >
+              <i className="bi bi-box-arrow-up-right"></i>Preview
+            </Button>
+            <Button
+              className="btn-sm mx-auto"
+              onClick={onActivate}
+              variant={
+                props.editable
+                  ? "outline-primary"
+                  : isActive
+                    ? "primary"
+                    : "outline-primary"
               }
-            }}
-            variant={
-              props.editable
-                ? "outline-success"
-                : isActive
-                  ? "primary"
-                  : "outline-primary"
-            }
-          >
-            {props.editable ? "Edit" : isActive ? "⭐️ Active" : "Activate"}
-          </Button>
+            >
+              {props.editable ? "Edit" : isActive ? "⭐️ Active" : "Activate"}
+            </Button>
+          </div>
         </div>
       </Card.Footer>
     </Card>

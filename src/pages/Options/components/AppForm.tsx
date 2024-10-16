@@ -18,13 +18,14 @@ import type { RetoolApp } from "@/types/extension";
 
 type Props = {
   app: RetoolApp;
+  onSave?: SubmitHandler<RetoolApp>;
 };
 
 const INIT_PARAM = { param: "", value: "" };
 
-function AppForm({ app }: Props) {
+function AppForm({ app, onSave }: Props) {
   const { domain } = useDomain();
-  const { setEditMode } = useEditMode();
+  const { stopEditMode } = useEditMode();
   const updateActiveApp = useStore((s) => s.updateActiveApp);
 
   const {
@@ -53,8 +54,19 @@ function AppForm({ app }: Props) {
     errorToast(message);
   };
 
+  const onCancel = () => {
+    resetForm();
+    stopEditMode();
+  };
+
+  const onDelete = () => {
+    resetForm();
+    stopEditMode();
+    alert("BALEETED!");
+  };
+
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSave ?? onSubmit, onError)}>
       <Form.Group className="mb-4" controlId="app">
         <div className="d-flex justify-content-between">
           <Form.Label>
@@ -172,12 +184,7 @@ function AppForm({ app }: Props) {
                     <Form.Control placeholder="value" {...field} />
                   )}
                 />
-                <TrashButton
-                  onClick={() => {
-                    console.log("Removing Query IDX", index);
-                    queryFields.remove(index);
-                  }}
-                />
+                <TrashButton onClick={() => queryFields.remove(index)} />
               </InputGroup>
             ))}
             <AddButton onClick={() => queryFields.append(INIT_PARAM)} />
@@ -208,22 +215,17 @@ function AppForm({ app }: Props) {
                     <Form.Control placeholder="value" {...field} />
                   )}
                 />
-                <TrashButton
-                  onClick={() => {
-                    console.log("Removing Hash IDX", index);
-                    hashFields.remove(index);
-                  }}
-                />
+                <TrashButton onClick={() => hashFields.remove(index)} />
               </InputGroup>
             ))}
             <AddButton onClick={() => hashFields.append(INIT_PARAM)} />
           </Form.Group>
         </Col>
       </Row>
-
+      {/*
       <Row>
         <RetoolAppUrl domain={domain} app={watch()} />
-      </Row>
+      </Row> */}
 
       <Row>
         <RetoolAppUrl2 domain={domain} app={watch()} />
@@ -231,17 +233,21 @@ function AppForm({ app }: Props) {
 
       <div className="d-flex gap-5">
         <Button
-          className="px-3"
+          className="d-flex gap-2 px-3"
           variant="outline-danger"
-          onClick={() => {
-            resetForm();
-            setEditMode(false);
-          }}
+          onClick={onCancel}
         >
-          Cancel
+          <i className="bi bi-x-octagon"></i>Cancel
         </Button>
         <Button className="flex-fill px-5" type="submit" variant="success">
           Save
+        </Button>
+        <Button
+          className="d-flex gap-2 px-3"
+          variant="outline-danger"
+          onClick={onDelete}
+        >
+          <i className="bi bi-trash"></i>Delete
         </Button>
       </div>
     </Form>

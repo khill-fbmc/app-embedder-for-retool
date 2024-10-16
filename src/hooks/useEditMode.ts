@@ -4,7 +4,7 @@ export function useEditMode() {
   const isEditing = useStore((s) => s.isEditing);
   const setEditMode = useStore((s) => s.setEditMode);
   const startEditMode = () => setEditMode(true);
-  const endEditMode = () => setEditMode(false);
+  const stopEditMode = () => setEditMode(false);
 
-  return { isEditing, setEditMode, startEditMode, endEditMode };
+  return { isEditing, setEditMode, startEditMode, stopEditMode };
 }

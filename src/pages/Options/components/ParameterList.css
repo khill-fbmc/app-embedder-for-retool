@@ -1,0 +1,43 @@
+.parameter-list {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+
+  li {
+    padding-left: 1.5em;
+    text-indent: -1em;
+  }
+
+  li::before {
+    color: grey;
+    padding-right: 5px;
+  }
+
+  li:not(:first-child)::before {
+    content: "&";
+  }
+
+  li.query-param:first-child::before {
+    content: "?";
+  }
+
+  li.hash-param:first-child::before {
+    content: "#";
+  }
+
+  .param-name {
+    margin-right: 5px;
+  }
+
+  .param-name::after {
+    content: "=";
+    color: grey;
+    padding-left: 5px;
+  }
+
+  .param-value {
+    font-weight: bold;
+  }
+
+
+}

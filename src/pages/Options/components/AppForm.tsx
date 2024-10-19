@@ -9,7 +9,6 @@ import { useStore } from "@/hooks/useStore";
 import { errorToast, successToast } from "@/lib/toast";
 
 import AddButton from "./AddButton";
-import RetoolAppUrl from "./RetoolAppUrl";
 import RetoolAppUrl2 from "./RetoolAppUrl2";
 import TrashButton from "./TrashButton";
 

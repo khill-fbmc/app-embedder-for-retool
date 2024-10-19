@@ -12,15 +12,6 @@ import DomainInput from "../components/DomainInput";
 
 import type { RetoolApp } from "@/types/extension";
 
-const NEW_APP: RetoolApp = {
-  name: "",
-  public: false,
-  version: "latest",
-  env: "development",
-  hash: [],
-  query: [],
-};
-
 function ConfigTab() {
   const methods = useForm<RetoolApp>();
   const { isEditing, startEditMode } = useEditMode();
@@ -74,3 +65,12 @@ function ConfigTab() {
 }
 
 export default ConfigTab;
+
+const NEW_APP: RetoolApp = {
+  name: "",
+  public: false,
+  version: "latest",
+  env: "development",
+  hash: [],
+  query: [],
+};

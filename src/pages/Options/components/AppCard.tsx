@@ -9,8 +9,9 @@ import { useRetoolAppUrl } from "@/hooks/useRetoolAppUrl";
 import { useStore } from "@/hooks/useStore";
 
 import AppVisibilityBadge from "./AppVisibilityBadge";
+import ParameterList from "./ParameterList";
 
-import type { RetoolApp, UrlParam } from "@/types/extension";
+import type { RetoolApp } from "@/types/extension";
 
 type BaseProps = {
   app?: RetoolApp;
@@ -67,7 +68,7 @@ function AppCard({ app, isActive, ...props }: Props) {
           <Col>
             <h5>Query Params</h5>
             {app?.query && app.query.length ? (
-              <Parameters type="query" params={app.query} />
+              <ParameterList type="query" params={app.query} />
             ) : (
               <small className="text-muted">none</small>
             )}
@@ -76,7 +77,7 @@ function AppCard({ app, isActive, ...props }: Props) {
           <Col>
             <h5>Hash Params</h5>
             {app?.hash && app.hash.length ? (
-              <Parameters type="hash" params={app.hash} />
+              <ParameterList type="hash" params={app.hash} />
             ) : (
               <small className="text-muted">none</small>
             )}
@@ -120,19 +121,3 @@ function AppCard({ app, isActive, ...props }: Props) {
 }
 
 export default AppCard;
-
-const Parameters: React.FC<{
-  type: "query" | "hash";
-  params: UrlParam[];
-}> = ({ type, params }) => {
-  return (
-    <dl>
-      {params.map((p) => (
-        <div key={p.param}>
-          <dt className={type}>{p.param}</dt>
-          <dd className="text-muted">{p.value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-};

@@ -6,7 +6,10 @@ import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
 import type { RetoolApp } from "@/types/extension";
 
+type TabKeys = "config" | "storage" | "workflow" | "json";
+
 export type State = {
+  currentTab: TabKeys;
   domain: string;
   isEditing: boolean;
   activeAppName: RetoolApp["name"] | undefined;
@@ -19,21 +22,24 @@ export type State = {
 };
 
 export type Actions = {
-  setDomain: (domain: State["domain"]) => void;
-  setActiveApp: (activeAppName: State["activeAppName"]) => void;
-  addApp: (app: RetoolApp) => void;
-  updateApp: (name: string, props: Partial<RetoolApp>) => void;
-  updateActiveApp: (props: Partial<RetoolApp>) => void;
-  setEditMode: (state: boolean) => void;
-  updateWorkflow: (workflow: Partial<State["workflow"]>) => void;
-  getActiveApp: () => RetoolApp | undefined;
   reset: () => void;
+  addApp: (app: RetoolApp) => void;
+  removeApp: (name: RetoolApp["name"]) => void;
+  updateApp: (name: RetoolApp["name"], props: Partial<RetoolApp>) => void;
+  updateActiveApp: (props: Partial<RetoolApp>) => void;
+  setDomain: (domain: State["domain"]) => void;
+  getActiveApp: () => RetoolApp | undefined;
+  setActiveApp: (activeAppName: State["activeAppName"]) => void;
+  setEditMode: (state: boolean) => void;
+  setActiveTab: (tab: TabKeys) => void;
+  updateWorkflow: (workflow: Partial<State["workflow"]>) => void;
 };
 
-export const STORAGE_KEY = "app-embedder-for-retool2";
+export const STORAGE_KEY = "app-embedder-for-retool4";
 
 const initialState: State = {
   domain: "fortunabmc",
+  currentTab: "config",
   isEditing: false,
   activeAppName: INSPECTOR_APP["name"],
   workflow: {
@@ -48,16 +54,28 @@ export const useStore = create<State & Actions>()(
     (set, get) => ({
       ...initialState,
       reset: () => set(initialState),
+      setActiveTab: (tab) => set({ currentTab: tab }),
       setDomain: (domain) => set(() => ({ domain })),
       setEditMode: (isEditing) => set(() => ({ isEditing })),
-      setActiveApp: (activeAppName) => set(() => ({ activeAppName })),
       addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
+      removeApp: (name) => {
+        set((state) => ({
+          apps: state.apps.filter((app) => app.name !== name),
+        }));
+      },
       updateApp: (name, props) => {
         set((state) => ({
           apps: state.apps.map((app) => {
             return app.name === name ? { ...app, ...props } : app;
           }),
         }));
+      },
+      getActiveApp: () => {
+        const activeAppName = get().activeAppName;
+        return get().apps.find((app) => app.name === activeAppName);
+      },
+      setActiveApp: (name) => {
+        set(() => ({ activeAppName: name }));
       },
       updateActiveApp: (props) => {
         const name = get().activeAppName;
@@ -70,10 +88,6 @@ export const useStore = create<State & Actions>()(
           ...state,
           workflow: { ...state.workflow, ...props },
         }));
-      },
-      getActiveApp: () => {
-        const activeAppName = get().activeAppName;
-        return get().apps.find((app) => app.name === activeAppName);
       },
     }),
     {

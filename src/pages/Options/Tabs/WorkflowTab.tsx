@@ -4,40 +4,23 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import useSWR from "swr";
 
 import { useStore } from "@/hooks/useStore";
-import { getWorkflowApps } from "@/lib/WorkflowDataFetcher";
+import { useWorkflowData } from "@/hooks/useWorkflow";
 
 import { SimpleJsonView } from "../components/SimpleJsonView";
 
-import type { RetoolApp } from "@/types/extension";
-
 function WorkflowTab() {
-  const workflow = useStore((s) => s.workflow);
-  const updateWorkflow = useStore((s) => s.updateWorkflow);
-
   const [useProvider, setUseProvider] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [workflowData, setWorkflowData] = useState<RetoolApp[]>([]);
-  const [workflowError, setWorkflowError] = useState<string | undefined>();
-
-  const fetchRemoteApps = async () => {
-    setIsLoading(true);
-    try {
-      const reply = await getWorkflowApps(workflow.apiKey, workflow.id);
-      if (reply.apps) {
-        setWorkflowData(reply.apps);
-      }
-    } catch (e) {
-      setWorkflowError((e as Error).message);
-    }
-    setIsLoading(false);
-  };
+  const { apiKey, id: workflowId } = useStore((s) => s.workflow);
+  const updateWorkflow = useStore((s) => s.updateWorkflow);
+  const { workflow, fetchWorkflowData } = useWorkflowData(apiKey, workflowId);
 
   useEffect(() => {
-    if (useProvider && workflow.id && workflow.apiKey) fetchRemoteApps();
+    if (useProvider && workflowId && apiKey) {
+      fetchWorkflowData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useProvider, workflow]);
 
@@ -68,13 +51,12 @@ function WorkflowTab() {
             <Card.Body>
               <Form.Group className="mb-4" controlId="workflowUrl">
                 <p className="text-muted">
-                  Enable this feature to swap the <code>App Name</code> from an
-                  input field, into a dynamic list fetched from a Retool
-                  Workflow.
+                  Enable this feature to use a <code>Retool Workflow</code> to
+                  provide the list of available apps.
                 </p>
                 <Form.Label>Workflow ID</Form.Label>
                 <Form.Control
-                  value={workflow.id}
+                  value={workflowId}
                   disabled={!useProvider}
                   onChange={(e) => updateWorkflow({ id: e.target.value })}
                 />
@@ -87,7 +69,7 @@ function WorkflowTab() {
                 <Form.Label>Workflow API Key</Form.Label>
                 <Form.Control
                   type="password"
-                  value={workflow.apiKey}
+                  value={apiKey}
                   disabled={!useProvider}
                   onChange={(e) => updateWorkflow({ apiKey: e.target.value })}
                 />
@@ -109,7 +91,7 @@ function WorkflowTab() {
                   variant={"success"}
                   disabled={useProvider === false}
                   title={`Refresh the app list from the remote workflow`}
-                  onClick={() => fetchRemoteApps()}
+                  onClick={fetchWorkflowData}
                 >
                   Refresh Apps
                 </Button>
@@ -127,12 +109,12 @@ function WorkflowTab() {
               </div>
             </Card.Header>
             <Card.Body>
-              {isLoading ? (
+              {workflow.isLoading ? (
                 <h1>Loading...</h1>
               ) : (
                 <>
-                  {workflowData.length > 0 ? (
-                    <SimpleJsonView value={workflowData} />
+                  {workflow.data.length > 0 ? (
+                    <SimpleJsonView value={workflow.data} />
                   ) : (
                     <Alert variant="danger">
                       No Apps Returned From Workflow
@@ -147,16 +129,16 @@ function WorkflowTab() {
                 <div>
                   {!useProvider ? (
                     <small className="text-muted">❌ Disabled</small>
-                  ) : isLoading ? (
+                  ) : workflow.isLoading ? (
                     <small className="text-muted">🚀 Fetching...</small>
-                  ) : workflowError ? (
+                  ) : workflow.error ? (
                     <small className="text-danger">
-                      💣 Error! {workflowError}
+                      💣 Error! {workflow.error}
                     </small>
-                  ) : workflowData.length > 0 ? (
+                  ) : workflow.data.length > 0 ? (
                     <small className="text-muted">
                       ✅ <span className="text-success">Success.</span> Loaded{" "}
-                      {workflowData.length} app names.
+                      {workflow.data.length} app names.
                     </small>
                   ) : (
                     <small className="text-muted">

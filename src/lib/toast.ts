@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-named-as-default
-import toast, { type ToastOptions, type ToastType } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 type Message = Parameters<typeof toast>[0];
 

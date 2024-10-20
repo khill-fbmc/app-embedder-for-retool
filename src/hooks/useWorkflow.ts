@@ -1,46 +1,39 @@
 import { useState } from "react";
-import useSWR from "swr";
 
 import type { RetoolApp } from "@/types/extension";
 
-export function useWorkflow(url: string, apiKey: string) {
-  const [workflowUrl, setWorkflowUrl] = useState<string>(url);
-  const [workflowApiKey, setWorkflowApiKey] = useState<string>(apiKey);
+export function useWorkflowData(apiKey: string, id: string) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [workflowData, setWorkflowData] = useState<RetoolApp[]>([]);
+  const [workflowError, setWorkflowError] = useState<string | undefined>();
+
+  const fetchWorkflowData = async () => {
+    setIsLoading(true);
+    try {
+      const url = `https://api.retool.com/v1/workflows/${id}/startTrigger`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Workflow-Api-Key": apiKey,
+        },
+      });
+
+      const result = (await res.json()) as { apps: RetoolApp[] };
+
+      setWorkflowData(result?.apps);
+    } catch (e) {
+      setWorkflowError((e as Error).message);
+    }
+    setIsLoading(false);
+  };
 
   return {
-    state: {
-      workflowUrl,
-      workflowApiKey,
+    fetchWorkflowData,
+    workflow: {
+      isLoading,
+      data: workflowData,
+      error: workflowError,
     },
-    setWorkflowUrl,
-    setWorkflowApiKey,
-    ...useSWR<WorkflowResult>(url, () => callWorkflow(url, workflowApiKey)),
   };
 }
-
-async function callWorkflow(
-  url: string,
-  workflowApiKey: string
-): Promise<WorkflowResult> {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Workflow-Api-Key": workflowApiKey,
-    },
-  });
-
-  const data = (await res.json()) as { apps: RetoolApp[] };
-
-  if (!data?.apps) {
-    throw new Error(
-      "The returned object from the workflow must have `apps` as a property."
-    );
-  }
-
-  return { apps: data.apps };
-}
-
-type WorkflowResult = {
-  apps: RetoolApp[];
-};

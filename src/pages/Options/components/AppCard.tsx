@@ -98,7 +98,7 @@ function AppCard({ app, isActive, ...props }: Props) {
               className="btn-sm d-flex gap-2"
               onClick={onPreview}
             >
-              <i className="bi bi-box-arrow-up-right"></i>Preview
+              <i className="bi bi-box-arrow-up-right"></i>Retool
             </Button>
             <Button
               className="btn-sm mx-auto"

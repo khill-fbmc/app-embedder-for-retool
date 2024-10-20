@@ -6,13 +6,18 @@ import { Toaster } from "react-hot-toast";
 
 import extLogo from "@/assets/img/logo_32.png";
 import retoolLogo from "@/assets/img/retool.svg";
+import { useTabs } from "@/hooks/useTabs";
 
 import OptionsForm from "./Tabs/ConfigTab";
 import JSONTab from "./Tabs/JSONTab";
 import StorageTab from "./Tabs/StorageTab";
 import WorkflowTab from "./Tabs/WorkflowTab";
 
+import type { TabKeys } from "./TabContext";
+
 function Options() {
+  const [activeTab, setActiveTab] = useTabs();
+
   return (
     <>
       <Navbar className="bg-body-tertiary">
@@ -24,13 +29,13 @@ function Options() {
           </div>
         </Container>
       </Navbar>
-
       <Tabs
         justify
-        defaultActiveKey="config"
+        activeKey={activeTab}
+        onSelect={(k) => setActiveTab(k as TabKeys)}
         className="mb-3 px-5 gap-3 bg-body-tertiary"
       >
-        <Tab eventKey="config" title="Settings">
+        <MyTab eventKey="config" title="Settings">
           <Container className="px-5 mt-2 mb-5">
             <Row>
               <Col className="offset-1 col-10">
@@ -42,16 +47,16 @@ function Options() {
             </Row>
             <OptionsForm />
           </Container>
-        </Tab>
-        <Tab eventKey="storage" title="Storage">
+        </MyTab>
+        <MyTab eventKey="storage" title="Storage">
           <StorageTab />
-        </Tab>
-        <Tab eventKey="workflow" title="Workflow">
+        </MyTab>
+        <MyTab eventKey="workflow" title="Workflow">
           <WorkflowTab />
-        </Tab>
-        <Tab eventKey="json" title="JSON">
+        </MyTab>
+        <MyTab eventKey="json" title="JSON">
           <JSONTab />
-        </Tab>
+        </MyTab>
       </Tabs>
       <footer className="d-flex py-2 bg-dark text-light justify-content-center">
         <p className="my-auto">
@@ -71,3 +76,11 @@ function Options() {
 }
 
 export default Options;
+
+const MyTab: React.FC<{
+  eventKey: TabKeys;
+  title: string;
+  children: React.ReactNode;
+}> = (props) => {
+  return <Tab {...props}>{props.children}</Tab>;
+};

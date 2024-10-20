@@ -3,10 +3,11 @@ import React from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
+import { useAppList } from "@/hooks/useAppList";
 import { useDomain } from "@/hooks/useDomain";
 import { useEditMode } from "@/hooks/useEditMode";
 import { useStore } from "@/hooks/useStore";
-import { errorToast, successToast } from "@/lib/toast";
+import { errorToast } from "@/lib/toast";
 
 import AddButton from "./AddButton";
 import RetoolAppUrl2 from "./RetoolAppUrl2";
@@ -17,14 +18,17 @@ import type { RetoolApp } from "@/types/extension";
 
 type Props = {
   app: RetoolApp;
-  onSave?: SubmitHandler<RetoolApp>;
+  onSave: SubmitHandler<RetoolApp>;
+  onCancel: () => void;
 };
 
 const INIT_PARAM = { param: "", value: "" };
 
-function AppForm({ app, onSave }: Props) {
+function AppForm({ app, onSave, onCancel }: Props) {
   const { domain } = useDomain();
   const { stopEditMode } = useEditMode();
+  const { removeApp } = useAppList();
+  const setActiveApp = useStore((s) => s.setActiveApp);
   const updateActiveApp = useStore((s) => s.updateActiveApp);
 
   const {
@@ -43,29 +47,22 @@ function AppForm({ app, onSave }: Props) {
   const hashFields = useFieldArray({ name: "hash", control });
   const queryFields = useFieldArray({ name: "query", control });
 
-  const onSubmit: SubmitHandler<RetoolApp> = async (data) => {
-    updateActiveApp(data);
-    successToast("Edits saved.");
-  };
-
   const onError: SubmitErrorHandler<RetoolApp> = (errors, e) => {
     const message = JSON.stringify(errors, null, 2);
     errorToast(message);
   };
 
-  const onCancel = () => {
-    resetForm();
-    stopEditMode();
-  };
-
-  const onDelete = () => {
-    resetForm();
-    stopEditMode();
-    alert("BALEETED!");
+  const onDelete = (name: string) => {
+    if (window.confirm(`Please Confirm Removal of "${app.name}"`)) {
+      stopEditMode();
+      setActiveApp(undefined);
+      resetForm();
+      removeApp(name);
+    }
   };
 
   return (
-    <Form onSubmit={handleSubmit(onSave ?? onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSave, onError)}>
       <Form.Group className="mb-4" controlId="app">
         <div className="d-flex justify-content-between">
           <Form.Label>
@@ -244,7 +241,7 @@ function AppForm({ app, onSave }: Props) {
         <Button
           className="d-flex gap-2 px-3"
           variant="outline-danger"
-          onClick={onDelete}
+          onClick={() => onDelete(app.name)}
         >
           <i className="bi bi-trash"></i>Delete
         </Button>

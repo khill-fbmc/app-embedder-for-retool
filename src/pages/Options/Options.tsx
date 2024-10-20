@@ -8,8 +8,8 @@ import extLogo from "@/assets/img/logo_32.png";
 import retoolLogo from "@/assets/img/retool.svg";
 import { useTabs } from "@/hooks/useTabs";
 
-import OptionsForm from "./Tabs/ConfigTab";
 import JSONTab from "./Tabs/JSONTab";
+import SettingsTab from "./Tabs/SettingsTab";
 import StorageTab from "./Tabs/StorageTab";
 import WorkflowTab from "./Tabs/WorkflowTab";
 
@@ -45,7 +45,7 @@ function Options() {
                 </Alert> */}
               </Col>
             </Row>
-            <OptionsForm />
+            <SettingsTab />
           </Container>
         </MyTab>
         <MyTab eventKey="storage" title="Storage">

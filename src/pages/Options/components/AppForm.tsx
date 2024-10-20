@@ -29,7 +29,6 @@ function AppForm({ app, onSave, onCancel }: Props) {
   const { stopEditMode } = useEditMode();
   const { removeApp } = useAppList();
   const setActiveApp = useStore((s) => s.setActiveApp);
-  const updateActiveApp = useStore((s) => s.updateActiveApp);
 
   const {
     control,

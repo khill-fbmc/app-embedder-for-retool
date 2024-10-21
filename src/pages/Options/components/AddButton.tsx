@@ -6,9 +6,12 @@ type Props = {
 };
 
 function AddButton({ onClick }: Props) {
-  const handler = onClick ?? function () {};
   return (
-    <Button className="btn-sm mx-5" variant="primary" onClick={handler}>
+    <Button
+      className="btn-sm mx-5"
+      variant="primary"
+      onClick={(e) => onClick && onClick(e)}
+    >
       Add +
     </Button>
   );

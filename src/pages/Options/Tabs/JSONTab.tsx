@@ -1,14 +1,14 @@
 import React from "react";
-import { Card, Col, Row } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
-import { useStore } from "@/hooks/useStore";
+import { useStorePrimitives } from "@/hooks/useStorePrimitives";
 
 import { SimpleJsonView } from "../components/SimpleJsonView";
 
 function JSONTab() {
-  const state = useStore();
-  console.log(state);
+  const state = useStorePrimitives();
+
   return (
     <Container className="pb-5">
       <div className="d-flex flex-column align-items-center">

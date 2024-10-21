@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useRef } from "react";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
@@ -40,8 +40,6 @@ function AppForm({ app, onSave, onCancel }: Props) {
     mode: "onBlur",
     defaultValues: { ...app },
   });
-
-  // console.log(watch());
 
   const hashFields = useFieldArray({ name: "hash", control });
   const queryFields = useFieldArray({ name: "query", control });
@@ -217,10 +215,6 @@ function AppForm({ app, onSave, onCancel }: Props) {
           </Form.Group>
         </Col>
       </Row>
-      {/*
-      <Row>
-        <RetoolAppUrl domain={domain} app={watch()} />
-      </Row> */}
 
       <Row>
         <RetoolAppUrl2 domain={domain} app={watch()} />

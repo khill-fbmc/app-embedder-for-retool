@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Alert, Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -11,30 +11,37 @@ import { useWorkflowData } from "@/hooks/useWorkflow";
 import { SimpleJsonView } from "../components/SimpleJsonView";
 
 function WorkflowTab() {
-  const [useProvider, setUseProvider] = useState(false);
+  const {
+    apiKey,
+    id: workflowId,
+    enabled: workflowEnabled,
+  } = useStore((s) => s.workflow);
 
-  const { apiKey, id: workflowId } = useStore((s) => s.workflow);
   const updateWorkflow = useStore((s) => s.updateWorkflow);
+  const retoolWorkflowUrl = useStore((s) => s.getRetoolWorkflowUrl);
+  const toggleWorkflowProvider = useStore((s) => s.toggleWorkflowProvider);
+
   const { workflow, fetchWorkflowData } = useWorkflowData(apiKey, workflowId);
 
   useEffect(() => {
-    if (useProvider && workflowId && apiKey) {
+    if (workflowEnabled && workflowId && apiKey) {
       fetchWorkflowData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [useProvider, workflow]);
+  }, [workflowEnabled, workflowId, apiKey]);
 
   return (
     <Container>
       <div className="my-2 d-flex">
-        <h2 className="mx-auto">Remote Apps List</h2>
+        <h2 className="mx-auto">Workflow Provider</h2>
       </div>
 
       <Row>
         <Col className="offset-1 col-10">
           <Alert variant="warning">
             <Alert.Heading>How To Use</Alert.Heading>
-            Here are all your saved Retool App Definitions
+            Use the workflow provider to add more apps to your list, from
+            Retool!
           </Alert>
         </Col>
       </Row>
@@ -42,11 +49,19 @@ function WorkflowTab() {
       <Row>
         <Col>
           <Card className="shadow">
-            <Card.Header>
+            <Card.Header className="d-inline-flex justify-content-between">
               <div className="d-flex gap-2">
                 <i className="bi bi-cloud"></i>
-                Workflow Details
+                Workflow
               </div>
+              <a
+                className="d-flex gap-2 link-secondary"
+                href={retoolWorkflowUrl()}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View in Retool<i className="bi bi-box-arrow-up-right"></i>
+              </a>
             </Card.Header>
             <Card.Body>
               <Form.Group className="mb-4" controlId="workflowUrl">
@@ -57,7 +72,7 @@ function WorkflowTab() {
                 <Form.Label>Workflow ID</Form.Label>
                 <Form.Control
                   value={workflowId}
-                  disabled={!useProvider}
+                  disabled={workflowEnabled === false}
                   onChange={(e) => updateWorkflow({ id: e.target.value })}
                 />
                 <Form.Text className="text-muted">
@@ -70,7 +85,7 @@ function WorkflowTab() {
                 <Form.Control
                   type="password"
                   value={apiKey}
-                  disabled={!useProvider}
+                  disabled={workflowEnabled === false}
                   onChange={(e) => updateWorkflow({ apiKey: e.target.value })}
                 />
                 <Form.Text className="text-muted">
@@ -81,15 +96,15 @@ function WorkflowTab() {
             <Card.Footer>
               <div className="d-flex justify-content-between">
                 <Button
-                  variant={useProvider ? "warning" : "primary"}
+                  variant={workflowEnabled ? "warning" : "primary"}
                   title={`Enable using a workflow to provide the app name list`}
-                  onClick={() => setUseProvider((old) => !old)}
+                  onClick={toggleWorkflowProvider}
                 >
-                  {useProvider ? "Disable Provider" : "Enable Provider"}
+                  {workflowEnabled ? "Disable Provider" : "Enable Provider"}
                 </Button>
                 <Button
                   variant={"success"}
-                  disabled={useProvider === false}
+                  disabled={workflowEnabled === false}
                   title={`Refresh the app list from the remote workflow`}
                   onClick={fetchWorkflowData}
                 >
@@ -105,12 +120,12 @@ function WorkflowTab() {
             <Card.Header>
               <div className="d-flex gap-2">
                 <i className="bi bi-cloud"></i>
-                Workflow Data
+                Remote App List
               </div>
             </Card.Header>
             <Card.Body>
               {workflow.isLoading ? (
-                <h1>Loading...</h1>
+                <h2>Loading...</h2>
               ) : (
                 <>
                   {workflow.data.length > 0 ? (
@@ -127,7 +142,7 @@ function WorkflowTab() {
               <div className="d-flex justify-content-between">
                 <small className="text-muted">Last update: 3 mins ago</small>
                 <div>
-                  {!useProvider ? (
+                  {!workflowEnabled ? (
                     <small className="text-muted">❌ Disabled</small>
                   ) : workflow.isLoading ? (
                     <small className="text-muted">🚀 Fetching...</small>

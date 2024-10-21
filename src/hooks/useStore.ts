@@ -17,6 +17,7 @@ export type State = {
   workflow: {
     id: string;
     apiKey: string;
+    enabled: boolean;
   };
   apps: RetoolApp[];
 };
@@ -24,6 +25,7 @@ export type State = {
 export type Actions = {
   reset: () => void;
   addApp: (app: RetoolApp) => void;
+  createApp: (namr: RetoolApp["name"]) => void;
   removeApp: (name: RetoolApp["name"]) => void;
   updateApp: (name: RetoolApp["name"], props: Partial<RetoolApp>) => void;
   updateActiveApp: (props: Partial<RetoolApp>) => void;
@@ -33,6 +35,8 @@ export type Actions = {
   setEditMode: (state: boolean) => void;
   setActiveTab: (tab: TabKeys) => void;
   updateWorkflow: (workflow: Partial<State["workflow"]>) => void;
+  getRetoolWorkflowUrl: () => string;
+  toggleWorkflowProvider: () => void;
 };
 
 export const STORAGE_KEY = "app-embedder-for-retool4";
@@ -45,6 +49,7 @@ const initialState: State = {
   workflow: {
     id: "13d34554-9891-40c0-a032-fda523774e97",
     apiKey: "retool_wk_bde9d74b27644cf3a0691211ff18dee2",
+    enabled: false,
   },
   apps: [INSPECTOR_APP, ...DEMO_APPS],
 };
@@ -58,6 +63,17 @@ export const useStore = create<State & Actions>()(
       setDomain: (domain) => set(() => ({ domain })),
       setEditMode: (isEditing) => set(() => ({ isEditing })),
       addApp: (app) => set((state) => ({ apps: [...state.apps, app] })),
+      createApp: (name: RetoolApp["name"]) => {
+        get().addApp({
+          name,
+          public: false,
+          version: "latest",
+          env: "development",
+          hash: [],
+          query: [],
+        });
+        get().setActiveApp(name);
+      },
       removeApp: (name) => {
         set((state) => ({
           apps: state.apps.filter((app) => app.name !== name),
@@ -71,23 +87,27 @@ export const useStore = create<State & Actions>()(
         }));
       },
       getActiveApp: () => {
-        const activeAppName = get().activeAppName;
-        return get().apps.find((app) => app.name === activeAppName);
+        const { activeAppName, apps } = get();
+        return apps.find((app) => app.name === activeAppName);
       },
       setActiveApp: (name) => {
         set(() => ({ activeAppName: name }));
       },
       updateActiveApp: (props) => {
-        const name = get().activeAppName;
-        if (name) {
-          get().updateApp(name, props);
-        }
+        const { activeAppName, updateApp } = get();
+        if (activeAppName) updateApp(activeAppName, props);
       },
       updateWorkflow: (props) => {
         set((state) => ({
           ...state,
           workflow: { ...state.workflow, ...props },
         }));
+      },
+      getRetoolWorkflowUrl: () => {
+        return `https://${get().domain}.retool.com/workflows/${get().workflow.id}`;
+      },
+      toggleWorkflowProvider: () => {
+        get().updateWorkflow({ enabled: !get().workflow.enabled });
       },
     }),
     {

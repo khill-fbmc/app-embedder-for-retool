@@ -77,6 +77,7 @@ function AppForm({ app, onSave, onCancel }: Props) {
                   name={field.name}
                   checked={field.value}
                   onChange={field.onChange}
+                  data-testid="form-public"
                 />
               </div>
             )}
@@ -105,7 +106,7 @@ function AppForm({ app, onSave, onCancel }: Props) {
               defaultValue={app?.version}
               render={({ field }) => (
                 <>
-                  <Form.Control {...field} />
+                  <Form.Control {...field} data-testid="form-version" />
                   {errors?.version && <p>Not Valid</p>}
                 </>
               )}
@@ -136,7 +137,7 @@ function AppForm({ app, onSave, onCancel }: Props) {
                     </div>
                     Environment
                   </Form.Label>
-                  <Form.Select {...field}>
+                  <Form.Select {...field} data-testid="form-environment">
                     <option value="production">Production</option>
                     <option value="staging">Staging</option>
                     <option value="development">Development</option>
@@ -225,16 +226,23 @@ function AppForm({ app, onSave, onCancel }: Props) {
           className="d-flex gap-2 px-3"
           variant="outline-danger"
           onClick={onCancel}
+          data-testid="form-button-cancel"
         >
           <i className="bi bi-x-octagon"></i>Cancel
         </Button>
-        <Button className="flex-fill px-5" type="submit" variant="success">
+        <Button
+          className="flex-fill px-5"
+          type="submit"
+          variant="success"
+          data-testid="form-button-save"
+        >
           Save
         </Button>
         <Button
           className="d-flex gap-2 px-3"
           variant="outline-danger"
           onClick={() => onDelete(app.name)}
+          data-testid="form-button-delete"
         >
           <i className="bi bi-trash"></i>Delete
         </Button>

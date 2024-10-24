@@ -1,4 +1,4 @@
-import type { RetoolApp } from "@/types/extension";
+import type { RetoolApp } from "@/types/retool-app";
 
 function useRetoolAppUrl(domain: string): (app: RetoolApp) => URL;
 function useRetoolAppUrl(domain: string, app?: RetoolApp): URL;

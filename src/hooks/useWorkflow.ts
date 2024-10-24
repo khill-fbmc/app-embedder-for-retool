@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { RetoolApp } from "@/types/extension";
+import type { RetoolApp } from "@/types/retool-app";
 
 export function useWorkflowData(apiKey: string, id: string) {
   const [isLoading, setIsLoading] = useState(false);

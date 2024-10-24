@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import ChromeStateStorage from "@/lib/ChromeStateStorage";
 import { DEMO_APPS, INSPECTOR_APP } from "@/lib/EmbeddableApps";
 
-import type { RetoolApp } from "@/types/extension";
+import type { RetoolApp } from "@/types/retool-app";
 
 type TabKeys = "config" | "storage" | "workflow" | "json";
 
@@ -18,6 +18,7 @@ export type State = {
     id: string;
     apiKey: string;
     enabled: boolean;
+    lastFetch: string | null;
   };
   apps: RetoolApp[];
 };
@@ -50,6 +51,7 @@ const initialState: State = {
     id: "13d34554-9891-40c0-a032-fda523774e97",
     apiKey: "retool_wk_bde9d74b27644cf3a0691211ff18dee2",
     enabled: false,
+    lastFetch: null,
   },
   apps: [INSPECTOR_APP, ...DEMO_APPS],
 };

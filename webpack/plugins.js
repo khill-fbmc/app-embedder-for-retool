@@ -1,3 +1,4 @@
+const { readFileSync } = require("node:fs");
 const path = require("node:path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -7,7 +8,7 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 
 const packageInfo = require("../package.json");
 const { imagePatterns } = require("./assets");
-const { manifestPath, outputPath, pagesPath } = require("./paths");
+const { manifestPath, outputPath, pagesPath, sourceRoot } = require("./paths");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -21,6 +22,11 @@ const commonPlugins = [
   new CleanWebpackPlugin({ verbose: false }),
   new webpack.ProgressPlugin(),
   new webpack.EnvironmentPlugin(["NODE_ENV", "DEBUG"]),
+  new webpack.DefinePlugin({
+    "process.env.APP_SCHEMA": JSON.stringify(
+      readFileSync(path.resolve(sourceRoot, "types/retool-app.ts"), "utf-8")
+    ),
+  }),
   new CopyWebpackPlugin({
     patterns: [
       {
